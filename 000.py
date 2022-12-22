@@ -38,8 +38,10 @@ class Board:
 
     def get_col(self, coord):
         x, y = coord[0] - self.left, coord[1] - self.top
+        x2, y2 = coord[0] + player.cs * 2 - self.left, coord[1] + player.cs - self.top
+        x2, y2 = x2 // self.cell_size, y2 // self.cell_size
         x, y = x // self.cell_size, y // self.cell_size
-        if self.board[y][x]:
+        if self.board[y][x] or self.board[y2][x2]:
             return True
         else:
             return False
@@ -71,7 +73,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
     running = True
     board = Board(20, 20)
-    Cursor, pos = Arrow((100, 100)), (100, 100)
+    player, pos = Arrow((100, 100)), (100, 100)
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -124,7 +126,7 @@ if __name__ == '__main__':
 
         screen.fill((0, 0, 0))
         board.render(screen)
-        Cursor.render(pos)
+        player.render(pos)
         pygame.display.flip()
     # завершение работы:
     pygame.quit()
