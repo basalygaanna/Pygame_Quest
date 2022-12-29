@@ -108,6 +108,19 @@ class Board:
             return False
 
 
+    def load_level(self, filename):
+        
+        # читаем уровень, убирая символы перевода строки
+        with open(filename, 'r') as mapFile:
+            level_map = [line.strip() for line in mapFile]
+
+            # и подсчитываем максимальную длину
+        max_width = max(map(len, level_map))
+
+            # дополняем каждую строку пустыми клетками ('.')
+        return list(map(lambda x: x.ljust(max_width, '.'), level_map))
+
+
 def draw(screen):
     screen.fill((0, 0, 0))
 
@@ -116,8 +129,10 @@ class Arrow:
     def __init__(self, pos):
         self.s = 0
         self.cs = 20
+        self.timer = 0
         coord = (pos[0], pos[1], self.cs * 2, self.cs)
         pygame.draw.rect(screen, (255, 0, 0), coord)
+        self.dg = 0
 
     def get_go(self):
         if go[0]:
@@ -251,6 +266,7 @@ class Arrow:
             screen.blit(string_rendered, intro_rect)
 
         while True:
+            print(player.timer)
             for event in pygame.event.get():
 
                 if event.type == pygame.QUIT:
@@ -381,7 +397,7 @@ if __name__ == '__main__':
     player, pos = Arrow((100, 100)), (100, 100)
 
     while running:
-
+        print(player.timer)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -436,6 +452,9 @@ if __name__ == '__main__':
                         ind = 3
                         player.LOAD()
 
+                if event.key == pygame.K_8:
+                    board.load_level('map')
+
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
                     FPS = 10
@@ -459,24 +478,32 @@ if __name__ == '__main__':
                 pos = pos[0], pos[1] + runt
 
         if player.get_go() == 'w' and fl[1]:
+
             if not board.get_col(pos) or board.cake == 4:
+
                 if board.cake == 4:
                     player.game_over()
                 pos = pos[0], pos[1] - runt
 
         if player.get_go() == 'a' and fl[2]:
+
             if not board.get_col(pos) or board.cake == 4:
+
                 if board.cake == 4:
                     player.game_over()
                 pos = pos[0] - runt, pos[1]
 
         if player.get_go() == 'd' and fl[3]:
+
             if not board.get_col(pos) or board.cake == 4:
+
                 if board.cake == 4:
                     player.game_over()
                 pos = pos[0] + runt, pos[1]
 
         screen.fill((0, 0, 0))
+
+        player.timer += 1
 
         board.render(screen)
 
