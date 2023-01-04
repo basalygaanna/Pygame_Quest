@@ -120,16 +120,13 @@ class CakeGame:
         intro_text = ["Чем выше, тем лучше!"]
         fon = pygame.transform.scale(pygame.image.load('pictures/fon.jpg'), self.screen_size)
         self.screen.blit(fon, (0, 0))
-        font = pygame.font.Font(None, 30)
-        text_coord = 50
+        font = pygame.font.Font(None, 40)
         clock = pygame.time.Clock()
         for line in intro_text:
             string_rendered = font.render(line, False, pygame.Color('black'))
             intro_rect = string_rendered.get_rect()
-            text_coord += 10
-            intro_rect.top = text_coord
-            intro_rect.x = 10
-            text_coord += intro_rect.height
+            intro_rect.x = 40
+            intro_rect.y = self.screen_size[1] // 8
             self.screen.blit(string_rendered, intro_rect)
 
         while True:
@@ -209,16 +206,15 @@ class CakeGame:
         fon = pygame.transform.scale(pygame.image.load('pictures/gameover.jpg'), self.screen_size)
         self.screen.blit(fon, (0, 0))
         font = pygame.font.SysFont("chiller", 130)
-        text_coord = 50
         clock = pygame.time.Clock()
+        text_coord_y = 0
         for line in intro_text:
             string_rendered = font.render(line, False, pygame.Color('purple'))
             intro_rect = string_rendered.get_rect()
-            text_coord += 10
-            intro_rect.top = text_coord
-            intro_rect.x = 400 - intro_rect.width // 2
-            text_coord += intro_rect.height
+            intro_rect.x = (self.screen_size[0] - intro_rect.width) // 2
+            intro_rect.y = self.screen_size[1] // 6 + text_coord_y
             self.screen.blit(string_rendered, intro_rect)
+            text_coord_y += 150
         for button in buttons:
             button.draw(self.screen)
         while True:
