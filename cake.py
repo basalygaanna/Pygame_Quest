@@ -157,33 +157,32 @@ class CakeGame:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     terminate()
-                if event.type == pygame.MOUSEBUTTONDOWN or \
+                if (event.type == pygame.MOUSEBUTTONDOWN and event.button == 1) or \
                         (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
-                    if event.button == 1:
-                        self.active_cake.change_status(self.cakes)
-                        self.cakes.append(self.active_cake)
-                        if self.cakes[-1].cake1:
-                            self.cake_size = self.cakes[-1].cake1.sprites()[-1].rect.x + 5 - \
-                                             self.cakes[-1].cake1.sprites()[
-                                                 0].rect.x
-                            self.count_cakes += 1
-                            self.count_height()
-                        if not self.cakes[-1].cake1:
-                            self.status = Status.FINISH
-                            return
+                    self.active_cake.change_status(self.cakes)
+                    self.cakes.append(self.active_cake)
+                    if self.cakes[-1].cake1:
+                        self.cake_size = self.cakes[-1].cake1.sprites()[-1].rect.x + 5 - \
+                                         self.cakes[-1].cake1.sprites()[
+                                             0].rect.x
+                        self.count_cakes += 1
+                        self.count_height()
+                    if not self.cakes[-1].cake1:
+                        self.status = Status.FINISH
+                        return
 
-                        if self.tower_height >= self.screen_size[1] // 100:
-                            self.cakes.pop(0)
-                            for cake in self.cakes:
-                                cake.shift_down()
-                        else:
-                            self.tower_height += 1
-                        self.active_cake = Cake(
-                            self.screen_size,
-                            self.tower_height,
-                            self.cake_size,
-                            self.get_picture()
-                        )
+                    if self.tower_height >= self.screen_size[1] // 100:
+                        self.cakes.pop(0)
+                        for cake in self.cakes:
+                            cake.shift_down()
+                    else:
+                        self.tower_height += 1
+                    self.active_cake = Cake(
+                        self.screen_size,
+                        self.tower_height,
+                        self.cake_size,
+                        self.get_picture()
+                    )
             pygame.display.flip()
             clock.tick(self.fps)
 
