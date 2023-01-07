@@ -307,6 +307,9 @@ class Board:
                 elif self.board[y][x] == 5:
                     pygame.draw.rect(screen, (0, 0, 255), coord)
 
+                elif self.board[y][x] == 6:
+                    pygame.draw.rect(screen, (255, 0, 255), coord)
+
                 else:
                     pygame.draw.rect(screen, (255, 255, 255), coord, 1)
 
@@ -318,7 +321,7 @@ class Board:
 
             x, y = x // self.cell_size, y // self.cell_size
 
-            self.board[y][x] = (self.board[y][x] + 1) % 6
+            self.board[y][x] = (self.board[y][x] + 1) % 7
 
         else:
             print(None)
@@ -343,6 +346,8 @@ class Board:
         print('get_col')
 
         print('lllol')
+        self.add_cake = self.board_condition[y][x]
+        print(self.add_cake)
         if self.board[y][x]:
             print('cake')
 
@@ -359,12 +364,20 @@ class Board:
             elif self.board[y][x] == 5:
                 self.cake = 5
 
+            elif self.board[y][x] == 6:
+                self.cake = 6
+
+            elif self.board[y][x] == 7:
+                self.cake = 7
+
+            elif self.board[y][x] == 8:
+                self.cake = 8
+
             else:
                 self.cake = 1
             print(self.cake)
             print(board.cake)
 
-            self.add_cake = self.board_condition[y][x]
             self.x = x
             self.y = y
 
@@ -372,6 +385,8 @@ class Board:
 
         else:
             print(False)
+            self.x = x
+            self.y = y
             return False
 
 
@@ -401,6 +416,8 @@ class Board:
                         self.board[y][x] = 3
                     elif level[y][x] == 'd':
                         self.board[y][x] = 5
+                    elif level[y][x] == 'l':
+                        self.board[y][x] = 6
                 except Exception:
                     print('lo')
         # вернем игрока, а также размер поля в клетках
@@ -467,18 +484,45 @@ class Arrow:
 
         elif board.get_col(coord) and board.cake == 5:
             print('cooler')
-            self.open_the_door(coord)
+            lx = []
+            self.open_the_door(board.x, board.y, lx, lx)
+
+        elif board.get_col(coord) and board.cake == 6:
+            print('coolsta')
+            self.oh_no_not_the_Stairs()
 
         else:
             print('notcool')
 
-    def open_the_door(self, coord):
 
+    def oh_no_not_the_Stairs(self):
+        print('ayo the pizza here')
+        if
+
+
+
+    def open_the_door(self, x, y, lx, ly):
+
+        lx.append(x)
+        ly.append(y)
+        print(lx)
         print(board.add_cake)
         board.add_cake = not board.add_cake
-        print(coord)
         print(board.board_condition)
-        board.board_condition[board.y][board.x] = not board.board_condition[board.y][board.x]
+        board.board_condition[y][x] = not board.board_condition[y][x]
+        if board.board[y][x - 1] == 5 and (y not in ly or x - 1 not in lx):
+            print('wha?')
+            self.open_the_door(x - 1, y, lx, ly)
+        if board.board[y][x + 1] == 5 and (y not in ly or x + 1 not in lx):
+            print('wha?')
+            self.open_the_door(x + 1, y, lx, ly)
+        if board.board[y - 1][x] == 5 and (y - 1 not in ly or x not in lx):
+            print('wha?')
+            self.open_the_door(x, y - 1, lx, ly)
+        if board.board[y + 1][x] == 5 and (y + 1 not in ly or x not in lx):
+            print('wha?')
+            self.open_the_door(x, y + 1, lx, ly)
+
         print(board.add_cake)
 
 
@@ -769,6 +813,7 @@ if __name__ == '__main__':
                     fl[0] = 0
 
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
+
                     fl[1] = 0
 
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
@@ -776,6 +821,8 @@ if __name__ == '__main__':
 
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     fl[3] = 0
+        print('x', board.x)
+        print('y', board.y)
         ps = board.board_condition[board.y][board.x]
         print(pos)
         print('ps', ps)
