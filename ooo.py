@@ -1,4 +1,23 @@
 import pygame, random, sqlite3, sys
+from enum import Enum
+from cake import CakeGame
+
+r = 1
+
+def terminate():
+    pygame.quit()
+    sys.exit()
+
+class Status(Enum):
+    otrun = 1
+    START = 2
+    RUN = 3
+
+    FINISH = 4
+    RESTART = 5
+    QUIT = 6
+
+
 
 
 class Board:
@@ -11,13 +30,18 @@ class Board:
 
         self.board = [[0] * width for _ in range(height)]
 
+        self.board_condition = [[0] * width for _ in range(height)]
+
         # значения по умолчанию
 
         self.left = 0
 
         self.top = 0
 
-        self.cell_size = 40
+        self.cell_size = 35
+
+        self.x = 0
+        self.y = 0
 
     # настройка внешнего вида
 
@@ -49,8 +73,15 @@ class Board:
                 elif self.board[y][x] == 4:
                     pygame.draw.rect(screen, (255, 255, 255), coord)
 
+                elif self.board[y][x] == 5:
+                    pygame.draw.rect(screen, (0, 0, 255), coord)
+
+                elif self.board[y][x] == 6:
+                    pygame.draw.rect(screen, (255, 0, 255), coord)
+
                 else:
                     pygame.draw.rect(screen, (255, 255, 255), coord, 1)
+
 
     def get_cell(self, coord):
         x, y = coord[0] - self.left, coord[1] - self.top
@@ -59,7 +90,7 @@ class Board:
 
             x, y = x // self.cell_size, y // self.cell_size
 
-            self.board[y][x] = (self.board[y][x] + 1) % 5
+            self.board[y][x] = (self.board[y][x] + 1) % 7
 
         else:
             print(None)
@@ -84,6 +115,8 @@ class Board:
         print('get_col')
 
         print('lllol')
+        self.add_cake = self.board_condition[y][x]
+        print(self.add_cake)
         if self.board[y][x]:
             print('cake')
 
@@ -97,14 +130,32 @@ class Board:
             elif self.board[y][x] == 4:
                 self.cake = 4
 
+            elif self.board[y][x] == 5:
+                self.cake = 5
+
+            elif self.board[y][x] == 6:
+                self.cake = 6
+
+            elif self.board[y][x] == 7:
+                self.cake = 7
+
+            elif self.board[y][x] == 8:
+                self.cake = 8
+
             else:
                 self.cake = 1
             print(self.cake)
+            print(board.cake)
+
+            self.x = x
+            self.y = y
 
             return True
 
         else:
             print(False)
+            self.x = x
+            self.y = y
             return False
 
 
@@ -119,6 +170,29 @@ class Board:
 
             # дополняем каждую строку пустыми клетками ('.')
         return list(map(lambda x: x.ljust(max_width, '.'), level_map))
+    def generate_level(self, level):
+        x, y = None, None
+        for y in range(len(level)):
+            for x in range(len(level[y])):
+                try:
+                    if level[y][x] == '.':
+                        self.board[y][x] = 0
+                    elif level[y][x] == '1':
+                        self.board[y][x] = 2
+                    elif level[y][x] == '@':
+                        self.board[y][x] = 1
+                    elif level[y][x] == 's':
+                        self.board[y][x] = 3
+                    elif level[y][x] == '!':
+                        self.board[y][x] = 4
+                    elif level[y][x] == 'd':
+                        self.board[y][x] = 5
+                    elif level[y][x] == 'l':
+                        self.board[y][x] = 6
+                except Exception:
+                    print('lo')
+        # вернем игрока, а также размер поля в клетках
+        return x, y
 
 
 def draw(screen):
@@ -127,8 +201,9 @@ def draw(screen):
 
 class Arrow:
     def __init__(self, pos):
+        self.cur_level = 'map'
         self.s = 0
-        self.cs = 20
+        self.cs = 15
         self.timer = 0
         coord = (pos[0], pos[1], self.cs * 2, self.cs)
         pygame.draw.rect(screen, (255, 0, 0), coord)
@@ -179,8 +254,55 @@ class Arrow:
             print('coolest')
             self.SAVE()
 
+        elif board.get_col(coord) and board.cake == 5:
+            print('cooler')
+            lx = []
+            self.open_the_door(board.x, board.y, lx, lx)
+
+        elif board.get_col(coord) and board.cake == 6:
+            print('coolsta')
+            self.oh_no_not_the_Stairs()
+
         else:
             print('notcool')
+
+
+    def oh_no_not_the_Stairs(self):
+        print('ayo the pizza here')
+        if self.get_go() == 'd' and self.cur_level == 'map-1':
+            board.generate_level(board.load_level('map'))
+            self.cur_level = 'map'
+        elif self.get_go() == 'd':
+            board.generate_level(board.load_level('map-1'))
+            self.cur_level = 'map-1'
+
+
+
+    def open_the_door(self, x, y, lx, ly):
+
+        lx.append(x)
+        ly.append(y)
+        print(lx)
+        print(board.add_cake)
+        board.add_cake = not board.add_cake
+        print(board.board_condition)
+        board.board_condition[y][x] = not board.board_condition[y][x]
+        if board.board[y][x - 1] == 5 and (y not in ly or x - 1 not in lx):
+            print('wha?')
+            self.open_the_door(x - 1, y, lx, ly)
+        if board.board[y][x + 1] == 5 and (y not in ly or x + 1 not in lx):
+            print('wha?')
+            self.open_the_door(x + 1, y, lx, ly)
+        if board.board[y - 1][x] == 5 and (y - 1 not in ly or x not in lx):
+            print('wha?')
+            self.open_the_door(x, y - 1, lx, ly)
+        if board.board[y + 1][x] == 5 and (y + 1 not in ly or x not in lx):
+            print('wha?')
+            self.open_the_door(x, y + 1, lx, ly)
+
+        print(board.add_cake)
+
+
 
     def terminate(self):
         pygame.quit()
@@ -228,6 +350,7 @@ class Arrow:
 
         while pygame.event.wait().type != pygame.QUIT:
             pass
+
         self.terminate()
 
         screen.blit(text, (60, 40))
@@ -390,11 +513,13 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
 
     running = True
-    runt = 40
+    runt = 35
 
-    board = Board(30, 25)
+    board = Board(30, 30)
 
-    player, pos = Arrow((100, 100)), (100, 100)
+    player, pos = Arrow((70, 70)), (73, 75)
+
+    level_x, level_y = board.generate_level(board.load_level('map'))
 
     while running:
         print(player.timer)
@@ -452,8 +577,12 @@ if __name__ == '__main__':
                         ind = 3
                         player.LOAD()
 
+                if event.key == pygame.K_4:
+                    game = CakeGame()
+                    game.run()
+
                 if event.key == pygame.K_8:
-                    board.load_level('map')
+                    board.generate_level(board.load_level('map-1'))
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
@@ -463,6 +592,7 @@ if __name__ == '__main__':
                     fl[0] = 0
 
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
+
                     fl[1] = 0
 
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
@@ -470,16 +600,21 @@ if __name__ == '__main__':
 
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     fl[3] = 0
-
+        print('x', board.x)
+        print('y', board.y)
+        ps = board.board_condition[board.y][board.x]
+        print(pos)
+        print('ps', ps)
         if player.get_go() == 's' and fl[0]:
-            if not board.get_col(pos) or board.cake == 4:
+
+            if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
                 if board.cake == 4:
                     player.game_over()
                 pos = pos[0], pos[1] + runt
 
         if player.get_go() == 'w' and fl[1]:
 
-            if not board.get_col(pos) or board.cake == 4:
+            if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
 
                 if board.cake == 4:
                     player.game_over()
@@ -487,19 +622,23 @@ if __name__ == '__main__':
 
         if player.get_go() == 'a' and fl[2]:
 
-            if not board.get_col(pos) or board.cake == 4:
+            if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
 
                 if board.cake == 4:
                     player.game_over()
+
                 pos = pos[0] - runt, pos[1]
 
         if player.get_go() == 'd' and fl[3]:
 
-            if not board.get_col(pos) or board.cake == 4:
+            if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
+
+                pos = pos[0] + runt, pos[1]
 
                 if board.cake == 4:
                     player.game_over()
-                pos = pos[0] + runt, pos[1]
+
+
 
         screen.fill((0, 0, 0))
 
