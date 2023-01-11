@@ -8,18 +8,6 @@ def terminate():
     pygame.quit()
     sys.exit()
 
-class Status(Enum):
-    otrun = 1
-    START = 2
-    RUN = 3
-
-    FINISH = 4
-    RESTART = 5
-    QUIT = 6
-
-
-
-
 class Board:
     # создание поля
     def __init__(self, width, height):
@@ -171,13 +159,14 @@ class Board:
             # дополняем каждую строку пустыми клетками ('.')
         return list(map(lambda x: x.ljust(max_width, '.'), level_map))
     def generate_level(self, level):
+        item = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a']
         x, y = None, None
         for y in range(len(level)):
             for x in range(len(level[y])):
                 try:
                     if level[y][x] == '.':
                         self.board[y][x] = 0
-                    elif level[y][x] == '1':
+                    elif level[y][x] in item:
                         self.board[y][x] = 2
                     elif level[y][x] == '@':
                         self.board[y][x] = 1
@@ -494,6 +483,7 @@ class Arrow:
 
         while pygame.event.wait().type != pygame.KEYDOWN:
             pass
+
 
 
 if __name__ == '__main__':
