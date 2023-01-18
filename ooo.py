@@ -1,12 +1,71 @@
 import pygame, random, sqlite3, sys
 from enum import Enum
 from cake import CakeGame
+from snake import SnakeGame
+from cake import Button
+
 
 r = 1
 
+class Status(Enum):
+    START = 1
+    RUN = 2
+    LIST = 6
+    CONT = 3
+    SETTS = 4
+    QUIT = 5
+
+def start_game():
+    intro_text = ['Заставка', '',
+                  'Правила игры',
+                  'Если в правилах несколько строк',
+                  'прихется выводить их построчно']
+    fon = pygame.transform.scale(pygame.image.load('pictures/strt_screen.png'))
+    screen.blit(fon, (0, 0))
+def List():
+    screen.fill((255, 255, 255))
+    intro_text = ['Список.', '',
+                  'Короче змейка, ',
+                  '1 фритайм,',
+                  'Помочь Даше с тортом,',
+                  '2 фритайм ',
+                  'Принести все табуретки',
+                  '3 фритайм,',
+                  '4 фритайм.',
+                  ]
+    #fon = pygame.transform.scale(pygame.image.load('pictures/strt_screen.png'), (width, height))
+    #screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 50)
+    text_coord = 50
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('black'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+    while True:
+        mouse_pos = pygame.mouse.get_pos()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_0:
+                    board.status = Status.RUN
+                    return
+
+        pygame.display.flip()
+        clock.tick(FPS)
+def load_image(im):
+    return pygame.image.load(f'pictures/{im}')
 def terminate():
     pygame.quit()
     sys.exit()
+
+
+
+
 
 class Board:
     # создание поля
@@ -31,7 +90,183 @@ class Board:
         self.x = 0
         self.y = 0
 
+        self.status = Status.START
+
     # настройка внешнего вида
+
+    def draw(self, level):
+        for y in range(len(level)):
+            for x in range(len(level[y])):
+                if level[y][x] == '.':
+                    wall1 = pygame.transform.scale(pygame.image.load('pictures/Ковер2.png'),
+                                                    (board.cell_size, 1.5 * board.cell_size))
+                    screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+
+    def draw_level(self, level):
+        x, y = None, None
+        for y in range(len(level)):
+            for x in range(len(level[y])):
+                try:
+                    if level[y][x] == '@':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стена1.png'),
+                                                       (board.cell_size, 2 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                    elif level[y][x] == 'd' and (not self.board_condition[y + 1][x] or self.board[y + 1][x] != 5):
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Дверь1.png'),
+                                                       (board.cell_size, 2 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                    elif level[y][x] == 'C':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стол1.png'),
+                                                       (board.cell_size, 2.5 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, (y - 0.5) * self.cell_size))
+                    elif level[y][x] == 'c':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стол2.png'),
+                                                       (board.cell_size, 1.5 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, (y + 0.5) * self.cell_size))
+                    elif level[y][x] == 'o':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стол3.png'),
+                                                       (3 * board.cell_size, 2 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, (y  ) * self.cell_size))
+                    elif level[y][x] == 't':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Табуретка1.png'),
+                                                       (board.cell_size, 1.5 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, (y + 0.5) * self.cell_size))
+                    elif level[y][x] == 'i':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Диван1.png'),
+                                                       (5 * board.cell_size, 2.5 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, (y + 0.25) * self.cell_size))
+                    elif level[y][x] == 'a':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Кровать2.png'),
+                                                       (board.cell_size, 2 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                    elif level[y][x] == 'r':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Кровать1.png'),
+                                                       (board.cell_size, 2.125 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, (y - 0.125) * self.cell_size))
+                    elif level[y][x] == 'v':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Кровать3.png'),
+                                                       (2 * board.cell_size, 1.25 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, (y + 0.75) * self.cell_size))
+                    elif level[y][x] == 'b':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Тумбочка1.png'),
+                                                       (board.cell_size, board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, (y + 1) * self.cell_size))
+                    elif level[y][x] == 'e':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стул1.png'),
+                                                       (board.cell_size, 1.6 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, (y + 0.4) * self.cell_size))
+                    elif level[y][x] == 'u':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стул2.png'),
+                                                       (board.cell_size, 1.6 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, (y + 0.8) * self.cell_size))
+                    elif level[y][x] == 'w':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стул3.png'),
+                                                       (board.cell_size, 1.6 * board.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, (y + 1.2) * self.cell_size))
+                except Exception:
+                    print('lo')
+
+
+    def start_screen(self):
+        name = []
+        intro_text = ["                 Название", "",
+                      "Правила игры",
+                      "Если в правилах несколько строк,"]
+
+        fon = pygame.transform.scale(load_image('strt_screen.png'), (width, height))
+        screen.blit(fon, (0, 0))
+        i = 0
+        fonti = pygame.font.Font(None, 120)
+        font = pygame.font.Font(None, 50)
+        text_coord = 50
+        for line in intro_text:
+            if i == 0:
+                string_rendered = fonti.render(line, 1, pygame.Color('white'))
+            else:
+                string_rendered = font.render(line, 1, pygame.Color('white'))
+            intro_rect = string_rendered.get_rect()
+            i += 1
+            text_coord += 10
+            intro_rect.top = text_coord
+            intro_rect.x = 10
+            text_coord += intro_rect.height
+            screen.blit(string_rendered, intro_rect)
+        buttons = [
+            Button(
+                (width - 300) // 2,
+                height - 700,
+                Status.RUN,
+                'Новая игра',
+            ),
+            Button(
+                (width - 300) // 2,
+                height - 550,
+                Status.CONT,
+                'Продолжить игру',
+            ),
+            Button(
+                (width - 300) // 2,
+                height - 400,
+                Status.SETTS,
+                'Настройки',
+            ),
+            Button(
+                (width - 300) // 2,
+                height - 250,
+                Status.QUIT,
+                'Выйти',
+            )
+        ]
+        for button in buttons:
+            button.draw(screen)
+        while True:
+            mouse_pos = pygame.mouse.get_pos()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    terminate()
+                elif event.type == pygame.KEYDOWN or \
+                        event.type == pygame.MOUSEBUTTONDOWN:
+                    for button in buttons:
+                        pressed, status = button.pressed(mouse_pos)
+                        if pressed:
+                            self.status = status
+                            if self.status == Status.RUN:
+                                self.start_log()
+                            return
+                        # button.draw(self.screen)
+            for button in buttons:
+                button.on_hoover(mouse_pos)
+                button.draw(screen)
+
+            pygame.display.flip()
+            clock.tick(FPS)
+
+    def start_log(self):
+        con = sqlite3.connect('log_base')
+        cur = con.cursor()
+        f = cur.execute(f'''SELECT logs FROM logs where id = 1''').fetchall()
+        font = pygame.font.Font(None, 50)
+        f = f[0][0]
+        '''try:
+            f = f[0][0].split('\n')[self.dg]
+        except Exception:
+            print(3)
+            return
+        if self.step >= 50:
+            return
+        self.step = self.step + 1
+        print(f[0][0])
+        text = font.render(f[:self.step], True, (100, 255, 100))'''
+        print(f)
+        text = font.render(f, True, (100, 255, 100))
+        x = 680
+        pygame.draw.rect(screen, (255, 255, 255), ((0, x - 2), (width, height - x)), 5)
+        pygame.draw.rect(screen, (0, 0, 0), ((0 + 2, x), (width - 5, height - x - 5)))
+        screen.blit(text, (60, x + 40))
+        pygame.display.flip()
+
+        while pygame.event.wait().type != pygame.KEYDOWN:
+            pass
 
     def set_view(self, left, top, cell_size):
         self.left = left
@@ -43,10 +278,10 @@ class Board:
     def render(self, screen):
 
         # pygame.draw.circle(screen, (255, 255, 0), 70, 80)
+        level = self.load_level(player.cur_pol)
         for y in range(self.height):
 
             for x in range(self.width):
-
                 coord = (self.left + x * self.cell_size, self.top + y * self.cell_size, self.cell_size, self.cell_size)
 
                 if self.board[y][x] == 1:
@@ -69,6 +304,29 @@ class Board:
 
                 else:
                     pygame.draw.rect(screen, (255, 255, 255), coord, 1)
+                try:
+                    if level[y][x] == '.':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Ковер2.png'),
+                                                        (self.cell_size, 1.5 * self.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                    elif level[y][x] == ',':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Ковер1.png'),
+                                                        (self.cell_size, 1.5 * self.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                    elif level[y][x] == '^':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Пол1.png'),
+                                                        (self.cell_size, 1.5 * self.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                    elif level[y][x] == '>':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Пол2.png'),
+                                                        (self.cell_size, 1.5 * self.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                    elif level[y][x] == '*':
+                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Ковер3.png'),
+                                                        (self.cell_size, 1.5 * self.cell_size))
+                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                except Exception:
+                    pass
 
 
     def get_cell(self, coord):
@@ -84,6 +342,7 @@ class Board:
             print(None)
 
     def get_col(self, coord):
+
         x, y = coord[0] - self.left, coord[1] - self.top
 
         x, y = x // self.cell_size, y // self.cell_size
@@ -104,6 +363,8 @@ class Board:
 
         print('lllol')
         self.add_cake = self.board_condition[y][x]
+        print('adcac', self.add_cake)
+
         print(self.add_cake)
         if self.board[y][x]:
             print('cake')
@@ -159,15 +420,19 @@ class Board:
             # дополняем каждую строку пустыми клетками ('.')
         return list(map(lambda x: x.ljust(max_width, '.'), level_map))
     def generate_level(self, level):
-        item = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a']
+        item = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+                'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         x, y = None, None
         for y in range(len(level)):
             for x in range(len(level[y])):
                 try:
+                    self.board_condition[y][x] = 0
                     if level[y][x] == '.':
                         self.board[y][x] = 0
                     elif level[y][x] in item:
                         self.board[y][x] = 2
+                        self.board_condition[y][x] = level[y][x]
+                        print(self.board_condition)
                     elif level[y][x] == '@':
                         self.board[y][x] = 1
                     elif level[y][x] == 's':
@@ -191,12 +456,16 @@ def draw(screen):
 class Arrow:
     def __init__(self, pos):
         self.cur_level = 'map'
+        self.cur_texture = 'maptexturka'
+        self.cur_pol = 'mappol'
         self.s = 0
         self.cs = 15
         self.timer = 0
         coord = (pos[0], pos[1], self.cs * 2, self.cs)
-        pygame.draw.rect(screen, (255, 0, 0), coord)
+        pygame.draw.rect(screen, (25-5, 0, 0), coord)
         self.dg = 0
+        self.lil_lock = 0
+        self.big_lock = 0
 
     def get_go(self):
         if go[0]:
@@ -261,9 +530,24 @@ class Arrow:
         if self.get_go() == 'd' and self.cur_level == 'map-1':
             board.generate_level(board.load_level('map'))
             self.cur_level = 'map'
-        elif self.get_go() == 'd':
+            self.cur_texture = 'maptexturka'
+            self.cur_pol = 'mappol'
+        elif self.get_go() == 'd' and self.cur_level == 'map':
             board.generate_level(board.load_level('map-1'))
             self.cur_level = 'map-1'
+            self.cur_texture = 'maptexturka-1'
+            self.cur_pol = 'mappol-1'
+        elif self.get_go() == 'w' and self.cur_level == 'map':
+            board.generate_level(board.load_level('map2'))
+            self.cur_level = 'map2'
+            self.cur_texture = 'maptexturka2'
+            self.cur_pol = 'mappol2'
+        elif self.get_go() == 'w' and self.cur_level == 'map2':
+            board.generate_level(board.load_level('map'))
+            self.cur_level = 'map'
+            self.cur_texture = 'maptexturka'
+            self.cur_pol = 'mappol'
+
 
 
 
@@ -445,44 +729,88 @@ class Arrow:
 
 
     def i_can_speak(self, screen):
-        font = pygame.font.Font(None, 100)
-        r = random.randint(1, 20)
-        print('pl')
-        print(r)
+        if board.add_cake == 0:
+            font = pygame.font.Font(None, 100)
+            r = random.randint(1, 20)
+            print('pl')
+            print(r)
 
-        if r <= 5:
-            text = font.render("Это диалог", True, (100, 255, 100))
+            if r <= 5:
+                text = font.render("Это диалог", True, (100, 255, 100))
 
-        elif r <= 10:
-            text = font.render("Это диалг", True, (100, 255, 100))
+            elif r <= 10:
+                text = font.render("Это диалг", True, (100, 255, 100))
 
-        elif r <= 13:
-            text = font.render("Этот диалог", True, (100, 255, 100))
+            elif r <= 13:
+                text = font.render("Этот диалог", True, (100, 255, 100))
 
-        elif r <= 16:
-            text = font.render("Это диалог...", True, (100, 255, 100))
+            elif r <= 16:
+                text = font.render("Это диалог...", True, (100, 255, 100))
 
-        elif r <= 19:
-            text = font.render("Это диалог :)", True, (100, 255, 100))
+            elif r <= 19:
+                text = font.render("Это диалог :)", True, (100, 255, 100))
 
-        else:
-            text = font.render("Это конец. Выходи.", True, (100, 255, 100))
-            text_x = width // 2 - text.get_width() // 2
-            text_y = height // 2 - text.get_height() // 2
-            screen.blit(text, (text_x, text_y))
+            else:
+                text = font.render("Это конец. Выходи.", True, (100, 255, 100))
+                text_x = width // 2 - text.get_width() // 2
+                text_y = height // 2 - text.get_height() // 2
+                screen.blit(text, (text_x, text_y))
+                pygame.display.flip()
+
+                while pygame.event.wait().type != pygame.QUIT:
+                    pass
+                self.terminate()
+            x = 680
+            pygame.draw.rect(screen, (255, 255, 255), ((0, x - 2), (width, height - x)), 5)
+            pygame.draw.rect(screen, (0, 0, 0), ((0 + 2, x), (width - 5, height - x - 5)))
+            screen.blit(text, (60, x + 40))
             pygame.display.flip()
 
-            while pygame.event.wait().type != pygame.QUIT:
+            while pygame.event.wait().type != pygame.KEYDOWN:
                 pass
-            self.terminate()
-        x = 680
-        pygame.draw.rect(screen, (255, 255, 255), ((0, x - 2), (width, height - x)), 5)
-        pygame.draw.rect(screen, (0, 0, 0), ((0 + 2, x), (width - 5, height - x - 5)))
-        screen.blit(text, (60, x + 40))
-        pygame.display.flip()
+        else:
+            k = ''
+            item = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+                    'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+            for i in range(len(item)):
+                if item[i] == board.add_cake:
+                    k = str(i)
+            print('k', k, 'self.lil_lock', self.lil_lock)
+            if k == '18' and (self.lil_lock == 0 or self.lil_lock == 1):
+                game = SnakeGame()
+                game.run()
+                self.lil_lock = 2
+            elif k == '18' and (self.lil_lock == 2 or self.lil_lock == 3):
+                game = CakeGame()
+                game.run()
+                self.lil_lock = 4
+            else:
+                con = sqlite3.connect('log_base')
+                cur = con.cursor()
+                f = cur.execute(f'''SELECT lettuce FROM lettuce where id = {k}''').fetchall()
+                font = pygame.font.Font(None, 50)
+                f = f[0][0]
+                '''try:
+                    f = f[0][0].split('\n')[self.dg]
+                except Exception:
+                    print(3)
+                    return
+                if self.step >= 50:
+                    return
+                self.step = self.step + 1
+                print(f[0][0])
+                text = font.render(f[:self.step], True, (100, 255, 100))'''
+                print(f)
+                text = font.render(f, True, (100, 255, 100))
+                x = 680
+                pygame.draw.rect(screen, (255, 255, 255), ((0, x - 2), (width, height - x)), 5)
+                pygame.draw.rect(screen, (0, 0, 0), ((0 + 2, x), (width - 5, height - x - 5)))
+                screen.blit(text, (60, x + 40))
+                pygame.display.flip()
 
-        while pygame.event.wait().type != pygame.KEYDOWN:
-            pass
+                while pygame.event.wait().type != pygame.KEYDOWN:
+                    pass
+
 
 
 
@@ -498,7 +826,7 @@ if __name__ == '__main__':
     flag = False
 
     size = width, height = 1200, 1000
-    FPS = 10
+    FPS = 100
 
     screen = pygame.display.set_mode(size)
 
@@ -508,139 +836,150 @@ if __name__ == '__main__':
     board = Board(30, 30)
 
     player, pos = Arrow((70, 70)), (73, 75)
+    board.start_screen()
 
     level_x, level_y = board.generate_level(board.load_level('map'))
 
     while running:
-        print(player.timer)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+        if board.status == Status.RUN:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                flag = True
-                p_s = event.pos
-                board.get_cell(p_s)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    flag = True
+                    p_s = event.pos
+                    board.get_cell(p_s)
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_z or event.key == pygame.K_RETURN:
-                    player.do(screen, pos)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_z or event.key == pygame.K_RETURN:
+                        player.do(screen, pos)
 
-                if event.key == pygame.K_q:
-                    player.s = 1
-                    player.do(screen, pos)
+                    if event.key == pygame.K_q:
+                        player.s = 1
+                        player.do(screen, pos)
 
-                if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
-                    FPS = 20
+                    if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+                        FPS = FPS + 100
 
-                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    fl[0] = 1
-                    go = [0, 0, 0, 0]
-                    go[0] = 1
+                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        fl[0] = 1
+                        go = [0, 0, 0, 0]
+                        go[0] = 1
 
-                if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    fl[1] = 1
-                    go = [0, 0, 0, 0]
-                    go[1] = 1
+                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                        fl[1] = 1
+                        go = [0, 0, 0, 0]
+                        go[1] = 1
 
-                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    fl[2] = 1
-                    go = [0, 0, 0, 0]
-                    go[2] = 1
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        fl[2] = 1
+                        go = [0, 0, 0, 0]
+                        go[2] = 1
 
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    fl[3] = 1
-                    go = [0, 0, 0, 0]
-                    go[3] = 1
+                    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        fl[3] = 1
+                        go = [0, 0, 0, 0]
+                        go[3] = 1
 
-                if event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3:
+                    if event.key == pygame.K_1 or event.key == pygame.K_2 or event.key == pygame.K_3:
 
-                    if event.key == pygame.K_1:
-                        ind = 1
-                        player.LOAD()
+                        if event.key == pygame.K_1:
+                            ind = 1
+                            player.LOAD()
 
-                    elif event.key == pygame.K_2:
-                        ind = 2
-                        player.LOAD()
+                        elif event.key == pygame.K_2:
+                            ind = 2
+                            player.LOAD()
 
-                    else:
-                        ind = 3
-                        player.LOAD()
+                        else:
+                            ind = 3
+                            player.LOAD()
 
-                if event.key == pygame.K_4:
-                    game = CakeGame()
-                    game.run()
+                    if event.key == pygame.K_4:
+                        game = CakeGame()
+                        game.run()
 
-                if event.key == pygame.K_8:
-                    board.generate_level(board.load_level('map-1'))
+                    if event.key == pygame.K_0:
+                        board.status = Status.LIST
 
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
-                    FPS = 10
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+                        FPS = FPS - 100
 
-                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    fl[0] = 0
+                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        fl[0] = 0
 
-                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    if event.key == pygame.K_UP or event.key == pygame.K_w:
 
-                    fl[1] = 0
+                        fl[1] = 0
 
-                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    fl[2] = 0
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        fl[2] = 0
 
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    fl[3] = 0
-        print('x', board.x)
-        print('y', board.y)
-        ps = board.board_condition[board.y][board.x]
-        print(pos)
-        print('ps', ps)
-        if player.get_go() == 's' and fl[0]:
+                    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        fl[3] = 0
+            ps = board.board_condition[board.y][board.x]
+            print('ps', ps)
+            if player.get_go() == 's' and fl[0]:
 
-            if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
-                if board.cake == 4:
-                    player.game_over()
-                pos = pos[0], pos[1] + runt
+                if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
+                    if board.cake == 4:
+                        player.game_over()
+                    pos = pos[0], pos[1] + runt
 
-        if player.get_go() == 'w' and fl[1]:
+            if player.get_go() == 'w' and fl[1]:
 
-            if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
+                if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
 
-                if board.cake == 4:
-                    player.game_over()
-                pos = pos[0], pos[1] - runt
+                    if board.cake == 4:
+                        player.game_over()
+                    pos = pos[0], pos[1] - runt
 
-        if player.get_go() == 'a' and fl[2]:
+            if player.get_go() == 'a' and fl[2]:
 
-            if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
+                if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
 
-                if board.cake == 4:
-                    player.game_over()
+                    if board.cake == 4:
+                        player.game_over()
 
-                pos = pos[0] - runt, pos[1]
+                    pos = pos[0] - runt, pos[1]
 
-        if player.get_go() == 'd' and fl[3]:
+            if player.get_go() == 'd' and fl[3]:
 
-            if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
+                if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
 
-                pos = pos[0] + runt, pos[1]
+                    pos = pos[0] + runt, pos[1]
 
-                if board.cake == 4:
-                    player.game_over()
+                    if board.cake == 4:
+                        player.game_over()
 
 
 
-        screen.fill((0, 0, 0))
+            screen.fill((0, 0, 0))
 
-        player.timer += 1
+            #board.draw(board.load_level('maptexturka'))
 
-        board.render(screen)
+            player.timer += 1
 
-        player.render(pos)
+            board.render(screen)
 
-        clock.tick(FPS)
+            player.render(pos)
 
-        pygame.display.flip()
+            board.draw_level(board.load_level(player.cur_texture))
+
+            clock.tick(FPS)
+            print(player.cur_texture)
+            print(player.cur_pol)
+
+            pygame.display.flip()
+        elif board.status == Status.QUIT:
+            terminate()
+        elif board.status == Status.LIST:
+            List()
+        else:
+            board.start_screen()
+
 
     # завершение работы:
     pygame.quit()
