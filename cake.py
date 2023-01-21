@@ -150,7 +150,8 @@ class CakeGame:
     def draw(self):
         clock = pygame.time.Clock()
         while True:
-            self.screen.fill((255, 255, 255))
+            fon = pygame.transform.scale(pygame.image.load('pictures/fon_sky.jpg'), self.screen_size)
+            self.screen.blit(fon, (0, 0))
             for cake in self.cakes:
                 cake.draw(self.screen)
             self.active_cake.draw(self.screen)
