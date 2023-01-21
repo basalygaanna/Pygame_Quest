@@ -35,7 +35,12 @@ class QuestGame:
             clue.rect.x = randint(0, self.screen_size[0] - clue.rect.width)
             clue.rect.y = randint(0, self.screen_size[1] - clue.rect.height)
             self.cl_id_dct[clue] = self.clues_dct[pic]
-        for i in range(20):
+            pic = choice(pictures)
+            cloth = pygame.sprite.Sprite(self.clothes)
+            cloth.image = pygame.image.load(pic)
+            cloth.rect = cloth.image.get_rect()
+            cloth.rect.center = clue.rect.center
+        for i in range(15):
             pic = choice(pictures)
             cloth = pygame.sprite.Sprite(self.clothes)
             cloth.image = pygame.image.load(pic)
@@ -99,7 +104,9 @@ def main():
     pygame.init()
     size = 800, 600
     pygame.display.set_mode(size)
-    game = QuestGame('pictures/basket_fon.jpg', ['pictures/ert.jpg.png'], {'pictures/wer.png': 1})
+    game = QuestGame('pictures/basket_fon.jpg',
+                     ['pictures/ert.jpg.png', 'pictures/ert.png', 'pictures/rty.png'],
+                     {'pictures/wer.png': 1})
     game.run()
     pygame.quit()
 
