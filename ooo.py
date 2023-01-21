@@ -64,6 +64,31 @@ def terminate():
     sys.exit()
 
 
+class Chara:
+    def __init__(self):
+        self.cr = 7
+    def generate_friends(self, filename):
+        chars = ['c', 'p', 'a', 'k', 'e', 'n', 'm', 'o', 'h']
+        if player.lil_lock == 0:
+            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 14), (10, 18), (18, 20), (5, 16), (8, 15))
+        elif player.lil_lock == 1:
+            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 14), (10, 18), (18, 20), (5, 16), (8, 15))
+        with open(filename, 'r') as mapFile:
+            level_map = [line.strip() for line in mapFile]
+        print(level_map)
+        for i in range(len(chars)):
+            print(sl[i][0], sl[i][1])
+            print(level_map[sl[i][0]])
+            print(chars[i])
+            print(level_map[sl[i][0]][8])
+            level_map[sl[i][0]] = ''.join([level_map[sl[i][0]][:sl[i][1] -1], chars[i], level_map[sl[i][0]][sl[i][1]:]])
+            print(level_map)
+        with open(filename, 'w') as mapFile:
+            for i in level_map:
+                mapFile.write(i)
+                mapFile.write('\n')
+
+
 
 
 
@@ -91,6 +116,44 @@ class Board:
         self.y = 0
 
         self.status = Status.START
+        self.carp2 = pygame.transform.scale(pygame.image.load('pictures/Ковер2.png'),
+                                           (self.cell_size, 1.5 * self.cell_size))
+        self.carp1 = pygame.transform.scale(pygame.image.load('pictures/Ковер1.png'),
+                                           (self.cell_size, 1.5 * self.cell_size))
+        self.floor1 = pygame.transform.scale(pygame.image.load('pictures/Пол1.png'),
+                                           (self.cell_size, 1.5 * self.cell_size))
+        self.floor2 = pygame.transform.scale(pygame.image.load('pictures/Пол2.png'),
+                                           (self.cell_size, 1.5 * self.cell_size))
+        self.carp3 = pygame.transform.scale(pygame.image.load('pictures/Ковер3.png'),
+                                           (self.cell_size, 1.5 * self.cell_size))
+        self.wall1 = pygame.transform.scale(pygame.image.load('pictures/Стена1.png'),
+                                           (self.cell_size, 2 * self.cell_size))
+        self.door1 = pygame.transform.scale(pygame.image.load('pictures/Дверь1.png'),
+                                           (self.cell_size, 2 * self.cell_size))
+        self.table1 = pygame.transform.scale(pygame.image.load('pictures/Стол1.png'),
+                                           (self.cell_size, 2.5 * self.cell_size))
+        self.table2 = pygame.transform.scale(pygame.image.load('pictures/Стол2.png'),
+                                           (self.cell_size, 1.5 * self.cell_size))
+        self.table3 = pygame.transform.scale(pygame.image.load('pictures/Стол3.png'),
+                                           (3 * self.cell_size, 2 * self.cell_size))
+        self.tabretk1 = pygame.transform.scale(pygame.image.load('pictures/Табуретка1.png'),
+                                           (self.cell_size, 1.5 * self.cell_size))
+        self.sofa1 = pygame.transform.scale(pygame.image.load('pictures/Диван1.png'),
+                                           (5 * self.cell_size, 2.5 * self.cell_size))
+        self.bed2 = pygame.transform.scale(pygame.image.load('pictures/Кровать2.png'),
+                                           (self.cell_size, 2 * self.cell_size))
+        self.bed1 = pygame.transform.scale(pygame.image.load('pictures/Кровать1.png'),
+                                           (self.cell_size, 2.125 * self.cell_size))
+        self.bed3 = pygame.transform.scale(pygame.image.load('pictures/Кровать3.png'),
+                                           (2 * self.cell_size, 1.25 * self.cell_size))
+        self.tmbk1 = pygame.transform.scale(pygame.image.load('pictures/Тумбочка1.png'),
+                                           (self.cell_size, self.cell_size))
+        self.chair1 = pygame.transform.scale(pygame.image.load('pictures/Стул1.png'),
+                                           (self.cell_size, 1.6 * self.cell_size))
+        self.chair2 = pygame.transform.scale(pygame.image.load('pictures/Стул2.png'),
+                                           (self.cell_size, 1.6 * self.cell_size))
+        self.chair3 = pygame.transform.scale(pygame.image.load('pictures/Стул3.png'),
+                                           (self.cell_size, 1.6 * self.cell_size))
 
     # настройка внешнего вида
 
@@ -102,76 +165,14 @@ class Board:
                                                     (board.cell_size, 1.5 * board.cell_size))
                     screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
 
-    def draw_level(self, level):
-        x, y = None, None
-        for y in range(len(level)):
-            for x in range(len(level[y])):
-                try:
-                    if level[y][x] == '@':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стена1.png'),
-                                                       (board.cell_size, 2 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
-                    elif level[y][x] == 'd' and (not self.board_condition[y + 1][x] or self.board[y + 1][x] != 5):
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Дверь1.png'),
-                                                       (board.cell_size, 2 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
-                    elif level[y][x] == 'C':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стол1.png'),
-                                                       (board.cell_size, 2.5 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, (y - 0.5) * self.cell_size))
-                    elif level[y][x] == 'c':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стол2.png'),
-                                                       (board.cell_size, 1.5 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, (y + 0.5) * self.cell_size))
-                    elif level[y][x] == 'o':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стол3.png'),
-                                                       (3 * board.cell_size, 2 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, (y  ) * self.cell_size))
-                    elif level[y][x] == 't':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Табуретка1.png'),
-                                                       (board.cell_size, 1.5 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, (y + 0.5) * self.cell_size))
-                    elif level[y][x] == 'i':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Диван1.png'),
-                                                       (5 * board.cell_size, 2.5 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, (y + 0.25) * self.cell_size))
-                    elif level[y][x] == 'a':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Кровать2.png'),
-                                                       (board.cell_size, 2 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
-                    elif level[y][x] == 'r':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Кровать1.png'),
-                                                       (board.cell_size, 2.125 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, (y - 0.125) * self.cell_size))
-                    elif level[y][x] == 'v':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Кровать3.png'),
-                                                       (2 * board.cell_size, 1.25 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, (y + 0.75) * self.cell_size))
-                    elif level[y][x] == 'b':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Тумбочка1.png'),
-                                                       (board.cell_size, board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, (y + 1) * self.cell_size))
-                    elif level[y][x] == 'e':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стул1.png'),
-                                                       (board.cell_size, 1.6 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, (y + 0.4) * self.cell_size))
-                    elif level[y][x] == 'u':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стул2.png'),
-                                                       (board.cell_size, 1.6 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, (y + 0.8) * self.cell_size))
-                    elif level[y][x] == 'w':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Стул3.png'),
-                                                       (board.cell_size, 1.6 * board.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, (y + 1.2) * self.cell_size))
-                except Exception:
-                    print('lo')
+
 
 
     def start_screen(self):
         name = []
-        intro_text = ["                 Название", "",
-                      "Правила игры",
-                      "Если в правилах несколько строк,"]
+        intro_text = ["                 Rhfcysq ntrcn", "",
+                      "Раз, два три",
+                      "Пять, скоро будем мы играть,"]
 
         fon = pygame.transform.scale(load_image('strt_screen.png'), (width, height))
         screen.blit(fon, (0, 0))
@@ -181,7 +182,7 @@ class Board:
         text_coord = 50
         for line in intro_text:
             if i == 0:
-                string_rendered = fonti.render(line, 1, pygame.Color('white'))
+                string_rendered = fonti.render(line, 1, pygame.Color('red'))
             else:
                 string_rendered = font.render(line, 1, pygame.Color('white'))
             intro_rect = string_rendered.get_rect()
@@ -304,29 +305,55 @@ class Board:
 
                 else:
                     pygame.draw.rect(screen, (255, 255, 255), coord, 1)
-                try:
+                '''try:
                     if level[y][x] == '.':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Ковер2.png'),
-                                                        (self.cell_size, 1.5 * self.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                        screen.blit(self.carp2, (x * self.cell_size, y * self.cell_size))
                     elif level[y][x] == ',':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Ковер1.png'),
-                                                        (self.cell_size, 1.5 * self.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                        screen.blit(self.carp1, (x * self.cell_size, y * self.cell_size))
                     elif level[y][x] == '^':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Пол1.png'),
-                                                        (self.cell_size, 1.5 * self.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                        screen.blit(self.floor1, (x * self.cell_size, y * self.cell_size))
                     elif level[y][x] == '>':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Пол2.png'),
-                                                        (self.cell_size, 1.5 * self.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                        screen.blit(self.floor2, (x * self.cell_size, y * self.cell_size))
                     elif level[y][x] == '*':
-                        wall1 = pygame.transform.scale(pygame.image.load('pictures/Ковер3.png'),
-                                                        (self.cell_size, 1.5 * self.cell_size))
-                        screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+                        screen.blit(self.carp3, (x * self.cell_size, y * self.cell_size))
                 except Exception:
-                    pass
+                    pass'''
+
+    def draw_level(self, level):
+        x, y = None, None
+        for y in range(len(level)):
+            for x in range(len(level[y])):
+                try:
+                    if level[y][x] == '@':
+                        screen.blit(self.wall1, (x * self.cell_size, y * self.cell_size))
+                    elif level[y][x] == 'd' and (not self.board_condition[y + 1][x] or self.board[y + 1][x] != 5):
+                        screen.blit(self.door1, (x * self.cell_size, y * self.cell_size))
+                    elif level[y][x] == 'C':
+                        screen.blit(self.table1, (x * self.cell_size, (y - 0.5) * self.cell_size))
+                    elif level[y][x] == 'c':
+                        screen.blit(self.table2, (x * self.cell_size, (y + 0.5) * self.cell_size))
+                    elif level[y][x] == 'o':
+                        screen.blit(self.table3, (x * self.cell_size, (y  ) * self.cell_size))
+                    elif level[y][x] == 't':
+                        screen.blit(self.tabretk1, (x * self.cell_size, (y + 0.5) * self.cell_size))
+                    elif level[y][x] == 'i':
+                        screen.blit(self.sofa1, (x * self.cell_size, (y + 0.25) * self.cell_size))
+                    elif level[y][x] == 'a':
+                        screen.blit(self.bed2, (x * self.cell_size, y * self.cell_size))
+                    elif level[y][x] == 'r':
+                        screen.blit(self.bed1, (x * self.cell_size, (y - 0.125) * self.cell_size))
+                    elif level[y][x] == 'v':
+                        screen.blit(self.bed3, (x * self.cell_size, (y + 0.75) * self.cell_size))
+                    elif level[y][x] == 'b':
+                        screen.blit(self.tmbk1, (x * self.cell_size, (y + 1) * self.cell_size))
+                    elif level[y][x] == 'e':
+                        screen.blit(self.chair1, (x * self.cell_size, (y + 0.4) * self.cell_size))
+                    elif level[y][x] == 'u':
+                        screen.blit(self.chair2, (x * self.cell_size, (y + 0.8) * self.cell_size))
+                    elif level[y][x] == 'w':
+                        screen.blit(self.chair3, (x * self.cell_size, (y + 1.2) * self.cell_size))
+                except Exception:
+                    print('lo')
 
 
     def get_cell(self, coord):
@@ -422,6 +449,7 @@ class Board:
     def generate_level(self, level):
         item = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
                 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        chars = ['p', 'c', 'a', 'k', 'e', 'n', 'm', 'o', 'h']
         x, y = None, None
         for y in range(len(level)):
             for x in range(len(level[y])):
@@ -443,6 +471,10 @@ class Board:
                         self.board[y][x] = 5
                     elif level[y][x] == 'l':
                         self.board[y][x] = 6
+                    elif level[y][x] in chars:
+                        self.board[y][x] = 2
+                        self.board_condition[y][x] = level[y][x]
+                        print(self.board_condition[y][x])
                 except Exception:
                     print('lo')
         # вернем игрока, а также размер поля в клетках
@@ -772,9 +804,41 @@ class Arrow:
             k = ''
             item = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
                     'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+            chars = ['c', 'p', 'a', 'k', 'e', 'n', 'm', 'o', 'h']
             for i in range(len(item)):
                 if item[i] == board.add_cake:
                     k = str(i)
+                    break
+            else:
+                for i in range(len(chars)):
+                    if chars[i] == board.add_cake:
+                        k = str(i + 1)
+                con = sqlite3.connect('log_base')
+                cur = con.cursor()
+                f = cur.execute(f'''SELECT mod FROM mod where id = {k}''').fetchall()
+                font = pygame.font.Font(None, 50)
+                f = f[0][0]
+                '''try:
+                    f = f[0][0].split('\n')[self.dg]
+                except Exception:
+                    print(3)
+                    return
+                if self.step >= 50:
+                    return
+                self.step = self.step + 1
+                print(f[0][0])
+                text = font.render(f[:self.step], True, (100, 255, 100))'''
+                print(f)
+                text = font.render(f, True, (100, 255, 100))
+                x = 680
+                pygame.draw.rect(screen, (255, 255, 255), ((0, x - 2), (width, height - x)), 5)
+                pygame.draw.rect(screen, (0, 0, 0), ((0 + 2, x), (width - 5, height - x - 5)))
+                screen.blit(text, (60, x + 40))
+                pygame.display.flip()
+
+                while pygame.event.wait().type != pygame.KEYDOWN:
+                    pass
+                return
             print('k', k, 'self.lil_lock', self.lil_lock)
             if k == '18' and (self.lil_lock == 0 or self.lil_lock == 1):
                 game = SnakeGame()
@@ -822,11 +886,13 @@ if __name__ == '__main__':
     fl = [0, 0, 0, 0]
     go = [0, 0, 0, 0]
 
+    chr = Chara()
+
     clock = pygame.time.Clock()
     flag = False
 
-    size = width, height = 1200, 1000
-    FPS = 100
+    size = width, height = 1600, 1000
+    FPS = 10
 
     screen = pygame.display.set_mode(size)
 
@@ -835,10 +901,13 @@ if __name__ == '__main__':
 
     board = Board(30, 30)
 
-    player, pos = Arrow((70, 70)), (73, 75)
+    player, pos = Arrow((70, 70)), (526, 491)
+    chr.generate_friends('map')
     board.start_screen()
 
     level_x, level_y = board.generate_level(board.load_level('map'))
+
+
 
     while running:
         if board.status == Status.RUN:
@@ -966,7 +1035,7 @@ if __name__ == '__main__':
 
             player.render(pos)
 
-            board.draw_level(board.load_level(player.cur_texture))
+            #board.draw_level(board.load_level(player.cur_texture))
 
             clock.tick(FPS)
             print(player.cur_texture)
