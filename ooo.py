@@ -68,11 +68,11 @@ class Chara:
     def __init__(self):
         self.cr = 7
     def generate_friends(self, filename):
-        chars = ['c', 'p', 'a', 'k', 'e', 'n', 'm', 'o', 'h']
+        chars = ['с', 'р', 'а', 'к', 'е', 'п', 'м', 'о', 'д']
         if player.lil_lock == 0:
             sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 14), (10, 18), (18, 20), (5, 16), (8, 15))
         elif player.lil_lock == 1:
-            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 14), (10, 18), (18, 20), (5, 16), (8, 15))
+            sl = ((6, 16), (3, 15), (24, 27), (10, 13), (9, 14), (10, 18), (18, 20), (5, 16), (8, 15))
         with open(filename, 'r') as mapFile:
             level_map = [line.strip() for line in mapFile]
         print(level_map)
@@ -117,44 +117,61 @@ class Board:
 
         self.status = Status.START
         self.carp2 = pygame.transform.scale(pygame.image.load('pictures/Ковер2.png'),
-                                           (self.cell_size, 1.5 * self.cell_size))
+                                            (self.cell_size, self.cell_size))
         self.carp1 = pygame.transform.scale(pygame.image.load('pictures/Ковер1.png'),
-                                           (self.cell_size, 1.5 * self.cell_size))
+                                            (self.cell_size, self.cell_size))
         self.floor1 = pygame.transform.scale(pygame.image.load('pictures/Пол1.png'),
-                                           (self.cell_size, 1.5 * self.cell_size))
+                                             (self.cell_size, self.cell_size))
         self.floor2 = pygame.transform.scale(pygame.image.load('pictures/Пол2.png'),
-                                           (self.cell_size, 1.5 * self.cell_size))
+                                             (self.cell_size, self.cell_size))
         self.carp3 = pygame.transform.scale(pygame.image.load('pictures/Ковер3.png'),
-                                           (self.cell_size, 1.5 * self.cell_size))
+                                            (self.cell_size, self.cell_size))
         self.wall1 = pygame.transform.scale(pygame.image.load('pictures/Стена1.png'),
-                                           (self.cell_size, 2 * self.cell_size))
+                                            (self.cell_size, 2 * self.cell_size))
         self.door1 = pygame.transform.scale(pygame.image.load('pictures/Дверь1.png'),
-                                           (self.cell_size, 2 * self.cell_size))
+                                            (self.cell_size, 2 * self.cell_size))
         self.table1 = pygame.transform.scale(pygame.image.load('pictures/Стол1.png'),
-                                           (self.cell_size, 2.5 * self.cell_size))
+                                             (self.cell_size, round(2.5 * self.cell_size)))
         self.table2 = pygame.transform.scale(pygame.image.load('pictures/Стол2.png'),
-                                           (self.cell_size, 1.5 * self.cell_size))
+                                             (self.cell_size, round(1.5 * self.cell_size)))
         self.table3 = pygame.transform.scale(pygame.image.load('pictures/Стол3.png'),
-                                           (3 * self.cell_size, 2 * self.cell_size))
+                                             (3 * self.cell_size, 2 * self.cell_size))
         self.tabretk1 = pygame.transform.scale(pygame.image.load('pictures/Табуретка1.png'),
-                                           (self.cell_size, 1.5 * self.cell_size))
+                                               (self.cell_size, round(1.5 * self.cell_size)))
         self.sofa1 = pygame.transform.scale(pygame.image.load('pictures/Диван1.png'),
-                                           (5 * self.cell_size, 2.5 * self.cell_size))
+                                            (5 * self.cell_size, round(2.5 * self.cell_size)))
         self.bed2 = pygame.transform.scale(pygame.image.load('pictures/Кровать2.png'),
                                            (self.cell_size, 2 * self.cell_size))
         self.bed1 = pygame.transform.scale(pygame.image.load('pictures/Кровать1.png'),
-                                           (self.cell_size, 2.125 * self.cell_size))
+                                           (self.cell_size, round(2.125 * self.cell_size)))
         self.bed3 = pygame.transform.scale(pygame.image.load('pictures/Кровать3.png'),
-                                           (2 * self.cell_size, 1.25 * self.cell_size))
+                                           (2 * self.cell_size, round(1.25 * self.cell_size)))
         self.tmbk1 = pygame.transform.scale(pygame.image.load('pictures/Тумбочка1.png'),
-                                           (self.cell_size, self.cell_size))
+                                            (self.cell_size, self.cell_size))
         self.chair1 = pygame.transform.scale(pygame.image.load('pictures/Стул1.png'),
-                                           (self.cell_size, 1.6 * self.cell_size))
+                                             (self.cell_size, round(1.6 * self.cell_size)))
         self.chair2 = pygame.transform.scale(pygame.image.load('pictures/Стул2.png'),
-                                           (self.cell_size, 1.6 * self.cell_size))
+                                             (self.cell_size, round(1.6 * self.cell_size)))
         self.chair3 = pygame.transform.scale(pygame.image.load('pictures/Стул3.png'),
-                                           (self.cell_size, 1.6 * self.cell_size))
-
+                                             (self.cell_size, round(1.6 * self.cell_size)))
+        self.ciniy = pygame.transform.scale(pygame.image.load('pictures/чел5.png'),
+                                             (self.cell_size, round(1.6 * self.cell_size)))
+        self.Polly = pygame.transform.scale(pygame.image.load('pictures/чел14.png'),
+                                             (self.cell_size, round(1.6 * self.cell_size)))
+        self.Alice = pygame.transform.scale(pygame.image.load('pictures/чел7.png'),
+                                            (self.cell_size, round(1.6 * self.cell_size)))
+        self.Ketrin = pygame.transform.scale(pygame.image.load('pictures/чел8.png'),
+                                            (self.cell_size, round(1.6 * self.cell_size)))
+        self.Dasha = pygame.transform.scale(pygame.image.load('pictures/чел9.png'),
+                                             (self.cell_size, round(1.6 * self.cell_size)))
+        self.Egorik = pygame.transform.scale(pygame.image.load('pictures/чел10.png'),
+                                            (self.cell_size, round(1.6 * self.cell_size)))
+        self.Masha = pygame.transform.scale(pygame.image.load('pictures/чел11.png'),
+                                             (self.cell_size, round(1.6 * self.cell_size)))
+        self.Andrew = pygame.transform.scale(pygame.image.load('pictures/чел12.png'),
+                                            (self.cell_size, round(1.6 * self.cell_size)))
+        self.Roma = pygame.transform.scale(pygame.image.load('pictures/чел13.png'),
+                                             (self.cell_size, round(1.6 * self.cell_size)))
     # настройка внешнего вида
 
     def draw(self, level):
@@ -305,7 +322,7 @@ class Board:
 
                 else:
                     pygame.draw.rect(screen, (255, 255, 255), coord, 1)
-                '''try:
+                try:
                     if level[y][x] == '.':
                         screen.blit(self.carp2, (x * self.cell_size, y * self.cell_size))
                     elif level[y][x] == ',':
@@ -317,7 +334,7 @@ class Board:
                     elif level[y][x] == '*':
                         screen.blit(self.carp3, (x * self.cell_size, y * self.cell_size))
                 except Exception:
-                    pass'''
+                    pass
 
     def draw_level(self, level):
         x, y = None, None
@@ -352,6 +369,24 @@ class Board:
                         screen.blit(self.chair2, (x * self.cell_size, (y + 0.8) * self.cell_size))
                     elif level[y][x] == 'w':
                         screen.blit(self.chair3, (x * self.cell_size, (y + 1.2) * self.cell_size))
+                    elif level[y][x] == 'р':
+                        screen.blit(self.Polly, (x * self.cell_size, (y - 1) * self.cell_size))
+                    elif level[y][x] == 'а':
+                        screen.blit(self.Alice, (x * self.cell_size, (y - 1) * self.cell_size))
+                    elif level[y][x] == 'к':
+                        screen.blit(self.Ketrin, (x * self.cell_size, (y - 1) * self.cell_size))
+                    elif level[y][x] == 'е':
+                        screen.blit(self.Egorik, (x * self.cell_size, (y - 1) * self.cell_size))
+                    elif level[y][x] == 'п':
+                        screen.blit(self.Andrew, (x * self.cell_size, (y - 1) * self.cell_size))
+                    elif level[y][x] == 'м':
+                        screen.blit(self.Masha, (x * self.cell_size, (y - 1) * self.cell_size))
+                    elif level[y][x] == 'о':
+                        screen.blit(self.Roma, (x * self.cell_size, (y - 1) * self.cell_size))
+                    elif level[y][x] == 'д':
+                        screen.blit(self.Dasha, (x * self.cell_size, (y - 1) * self.cell_size))
+
+
                 except Exception:
                     print('lo')
 
@@ -449,7 +484,7 @@ class Board:
     def generate_level(self, level):
         item = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
                 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-        chars = ['p', 'c', 'a', 'k', 'e', 'n', 'm', 'o', 'h']
+        chars = ['с', 'р', 'а', 'к', 'е', 'п', 'м', 'о', 'д']
         x, y = None, None
         for y in range(len(level)):
             for x in range(len(level[y])):
@@ -498,6 +533,14 @@ class Arrow:
         self.dg = 0
         self.lil_lock = 0
         self.big_lock = 0
+        self.Mari = pygame.transform.scale(pygame.image.load('pictures/чел1.png'),
+                                           (board.cell_size, round(1.6 * board.cell_size)))
+        self.Mari2 = pygame.transform.scale(pygame.image.load('pictures/чел2.png'),
+                                           (board.cell_size, round(1.6 * board.cell_size)))
+        self.Mari3 = pygame.transform.scale(pygame.image.load('pictures/чел3.png'),
+                                           (board.cell_size, round(1.6 * board.cell_size)))
+        self.Mari4 = pygame.transform.scale(pygame.image.load('pictures/чел4.png'),
+                                           (board.cell_size, round(1.6 * board.cell_size)))
 
     def get_go(self):
         if go[0]:
@@ -517,18 +560,24 @@ class Arrow:
 
         if self.get_go() == 's':
             pygame.draw.rect(screen, (255, 0, 0), coord)
+            screen.blit(self.Mari, (pos[0] * board.cell_size, (pos[1] - 1) * board.cell_size))
+
 
         elif self.get_go() == 'w':
             pygame.draw.rect(screen, (255, 255, 0), coord)
+            screen.blit(self.Mari2, (pos[0] * board.cell_size, (pos[1] - 1) * board.cell_size))
 
         elif self.get_go() == 'a':
             pygame.draw.rect(screen, (255, 0, 255), coord)
+            screen.blit(self.Mari3, (pos[0] * board.cell_size, (pos[1] - 1) * board.cell_size))
 
         elif self.get_go() == 'd':
             pygame.draw.rect(screen, (0, 255, 255), coord)
+            screen.blit(self.Mari4, (pos[0] * board.cell_size, (pos[1] - 1) * board.cell_size))
 
         else:
             pygame.draw.rect(screen, (0, 0, 255), coord)
+            screen.blit(self.Mari, (pos[0] * board.cell_size, (pos[1] - 1) * board.cell_size))
 
     def do(self, screen, coord):
         print('do')
@@ -804,7 +853,7 @@ class Arrow:
             k = ''
             item = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
                     'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-            chars = ['c', 'p', 'a', 'k', 'e', 'n', 'm', 'o', 'h']
+            chars = ['с', 'р', 'а', 'к', 'е', 'п', 'м', 'о', 'д']
             for i in range(len(item)):
                 if item[i] == board.add_cake:
                     k = str(i)
@@ -903,6 +952,7 @@ if __name__ == '__main__':
 
     player, pos = Arrow((70, 70)), (526, 491)
     chr.generate_friends('map')
+    chr.generate_friends('maptexturka')
     board.start_screen()
 
     level_x, level_y = board.generate_level(board.load_level('map'))
@@ -1035,7 +1085,7 @@ if __name__ == '__main__':
 
             player.render(pos)
 
-            #board.draw_level(board.load_level(player.cur_texture))
+            board.draw_level(board.load_level(player.cur_texture))
 
             clock.tick(FPS)
             print(player.cur_texture)
