@@ -70,17 +70,17 @@ class Chara:
     def generate_friends(self, filename):
         chars = ['с', 'р', 'а', 'к', 'е', 'п', 'м', 'о', 'д']
         if player.lil_lock == 0:
-            sl = ((3, 16), (3, 15), (24, 27), (8, 13), (8, 14), (11, 19), (18, 20), (3, 24), (18, 19))
+            sl = ((3, 16), (3, 15), (23, 27), (8, 13), (8, 14), (11, 19), (18, 20), (3, 24), (18, 19))
         elif player.lil_lock == 1:
-            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 15), (10, 19), (18, 20), (3, 24), (18, 19))
+            sl = ((14, 13), (13, 13), (21, 20), (19, 17), (19, 15), (11, 19), (11, 20), (8, 13), (7, 9))
         elif player.lil_lock == 2:
-            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 15), (10, 19), (18, 20), (3, 24), (18, 19))
+            sl = ((4, 17), (5, 17), (11, 20), (12, 23), (13, 24), (11, 19), (18, 15), (25, 8), (7, 8))
         elif player.lil_lock == 3:
-            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 15), (10, 19), (18, 20), (3, 24), (18, 19))
+            sl = ((4, 11), (3, 12), (7, 17), (20, 23), (24, 15), (11, 19), (4, 9), (25, 22), (8, 9))
         elif player.lil_lock == 4:
-            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 15), (10, 19), (0, 0), (3, 24), (18, 19))
+            sl = ((7, 11), (3, 15), (12, 9), (8, 13), (8, 15), (0, 0), (0, 0), (10, 7), (18, 19))
         elif player.lil_lock == 5:
-            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 15), (0, 0), (18, 20), (3, 24), (18, 19))
+            sl = ((3, 16), (3, 15), (19, 18), (19, 15), (20, 17), (0, 0), (18, 20), (3, 24), (18, 19))
         with open((filename + '1'), 'r') as mapFile:
             level_map = [line.strip() for line in mapFile]
         print(level_map)
@@ -318,7 +318,7 @@ class Board:
         for y in range(self.height):
 
             for x in range(self.width):
-                coord = (pos[0], pos[1], player.cs * 2, player.cs)
+                '''coord = (pos[0], pos[1], player.cs * 2, player.cs)
 
                 if self.board[y][x] == 1:
                     pygame.draw.rect(screen, (0, 255, 0), coord)
@@ -339,7 +339,7 @@ class Board:
                     pygame.draw.rect(screen, (255, 0, 255), coord)
 
                 else:
-                    pygame.draw.rect(screen, (255, 255, 255), coord, 1)
+                    pygame.draw.rect(screen, (255, 255, 255), coord, 1)'''
                 try:
                     if level[y][x] == '.':
                         screen.blit(self.carp2, (x * self.cell_size, y * self.cell_size))
@@ -359,6 +359,7 @@ class Board:
         for y in range(len(level)):
             for x in range(len(level[y])):
                 try:
+                    '''
                     coord = (pos[0], pos[1], player.cs * 2, player.cs)
 
                     if player.get_go() == 's':
@@ -370,9 +371,19 @@ class Board:
                     elif player.get_go() == 'd':
                         screen.blit(self.Mari4, (coord[0], coord[1] - board.cell_size))
                     else:
-                        screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
+                        screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))'''
                     coord = (
                     self.left + x * self.cell_size, self.top + y * self.cell_size, self.cell_size, self.cell_size)
+                    if player.get_go() == 's' and (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
+                        screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
+                    elif player.get_go() == 'w' and (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
+                        screen.blit(self.Mari2, (coord[0], coord[1] - board.cell_size))
+                    elif player.get_go() == 'a' and (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
+                        screen.blit(self.Mari3, (coord[0], coord[1] - board.cell_size))
+                    elif player.get_go() == 'd' and (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
+                        screen.blit(self.Mari4, (coord[0], coord[1] - board.cell_size))
+                    elif (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
+                        screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
                     if level[y][x] == '@':
                         screen.blit(self.wall1, (x * self.cell_size, y * self.cell_size))
                     elif level[y][x] == 'd' and (not self.board_condition[y + 1][x] or self.board[y + 1][x] != 5):
@@ -419,17 +430,6 @@ class Board:
                         screen.blit(self.Roma, (x * self.cell_size, (y - 1) * self.cell_size))
                     elif level[y][x] == 'д':
                         screen.blit(self.Dasha, (x * self.cell_size, (y - 1) * self.cell_size))
-                    elif player.get_go() == 's' and level[y][x] == coord:
-                        screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
-                    elif player.get_go() == 'w' and level[y][x] == coord:
-                        screen.blit(self.Mari2, (coord[0], coord[1] - board.cell_size))
-                    elif player.get_go() == 'a' and level[y][x] == coord:
-                        screen.blit(self.Mari3, (coord[0], coord[1] - board.cell_size))
-                    elif player.get_go() == 'd' and level[y][x] == coord:
-                        screen.blit(self.Mari4, (coord[0], coord[1] - board.cell_size))
-                    elif player.get_go() != 'd' and level[y][x] == coord:
-                        screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
-
 
                 except Exception:
                     print('lo')
@@ -1029,11 +1029,6 @@ if __name__ == '__main__':
                 if event.type == pygame.QUIT:
                     running = False
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    flag = True
-                    p_s = event.pos
-                    board.get_cell(p_s)
-
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_z or event.key == pygame.K_RETURN:
                         player.do(screen, pos)
@@ -1079,12 +1074,40 @@ if __name__ == '__main__':
                             ind = 3
                             player.LOAD()
 
-                    if event.key == pygame.K_4:
-                        game = CakeGame()
-                        game.run()
-
                     if event.key == pygame.K_0:
                         board.status = Status.LIST
+
+                    if event.key == pygame.K_KP1:
+                        player.lil_lock = 1
+                        chr.generate_friends('map')
+                        chr.generate_friends('maptexturka')
+                        level_x, level_y = board.generate_level(board.load_level('map'))
+                    if event.key == pygame.K_KP2:
+                        player.lil_lock = 2
+                        chr.generate_friends('map')
+                        chr.generate_friends('maptexturka')
+                        level_x, level_y = board.generate_level(board.load_level('map'))
+                    if event.key == pygame.K_KP0:
+                        player.lil_lock = 0
+                        chr.generate_friends('map')
+                        chr.generate_friends('maptexturka')
+                        level_x, level_y = board.generate_level(board.load_level('map'))
+                    if event.key == pygame.K_KP3:
+                        player.lil_lock = 3
+                        chr.generate_friends('map')
+                        chr.generate_friends('maptexturka')
+                        level_x, level_y = board.generate_level(board.load_level('map'))
+                    if event.key == pygame.K_KP4:
+                        player.lil_lock = 4
+                        chr.generate_friends('map')
+                        chr.generate_friends('maptexturka')
+                        level_x, level_y = board.generate_level(board.load_level('map'))
+                    if event.key == pygame.K_KP5:
+                        player.lil_lock = 5
+                        chr.generate_friends('map')
+                        chr.generate_friends('maptexturka')
+                        level_x, level_y = board.generate_level(board.load_level('map'))
+
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
@@ -1147,7 +1170,7 @@ if __name__ == '__main__':
 
             board.render(screen, pos)
 
-            player.render(pos)
+            #player.render(pos)
 
             board.draw_level(board.load_level(player.cur_texture), pos)
 
