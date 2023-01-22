@@ -70,10 +70,18 @@ class Chara:
     def generate_friends(self, filename):
         chars = ['с', 'р', 'а', 'к', 'е', 'п', 'м', 'о', 'д']
         if player.lil_lock == 0:
-            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 14), (10, 18), (18, 20), (5, 16), (8, 15))
+            sl = ((3, 16), (3, 15), (24, 27), (8, 13), (8, 14), (11, 19), (18, 20), (3, 24), (18, 19))
         elif player.lil_lock == 1:
-            sl = ((6, 16), (3, 15), (24, 27), (10, 13), (9, 14), (10, 18), (18, 20), (5, 16), (8, 15))
-        with open(filename, 'r') as mapFile:
+            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 15), (10, 19), (18, 20), (3, 24), (18, 19))
+        elif player.lil_lock == 2:
+            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 15), (10, 19), (18, 20), (3, 24), (18, 19))
+        elif player.lil_lock == 3:
+            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 15), (10, 19), (18, 20), (3, 24), (18, 19))
+        elif player.lil_lock == 4:
+            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 15), (10, 19), (0, 0), (3, 24), (18, 19))
+        elif player.lil_lock == 5:
+            sl = ((3, 16), (3, 15), (24, 27), (10, 13), (9, 15), (0, 0), (18, 20), (3, 24), (18, 19))
+        with open((filename + '1'), 'r') as mapFile:
             level_map = [line.strip() for line in mapFile]
         print(level_map)
         for i in range(len(chars)):
@@ -81,7 +89,8 @@ class Chara:
             print(level_map[sl[i][0]])
             print(chars[i])
             print(level_map[sl[i][0]][8])
-            level_map[sl[i][0]] = ''.join([level_map[sl[i][0]][:sl[i][1] -1], chars[i], level_map[sl[i][0]][sl[i][1]:]])
+            if sl[i] != (0, 0):
+                level_map[sl[i][0]] = ''.join([level_map[sl[i][0]][:sl[i][1] -1], chars[i], level_map[sl[i][0]][sl[i][1]:]])
             print(level_map)
         with open(filename, 'w') as mapFile:
             for i in level_map:
@@ -155,7 +164,7 @@ class Board:
         self.chair3 = pygame.transform.scale(pygame.image.load('pictures/Стул3.png'),
                                              (self.cell_size, round(1.6 * self.cell_size)))
         self.ciniy = pygame.transform.scale(pygame.image.load('pictures/чел5.png'),
-                                             (self.cell_size, round(1.6 * self.cell_size)))
+                                             (round(1.2 * self.cell_size), round(1.6 * self.cell_size)))
         self.Polly = pygame.transform.scale(pygame.image.load('pictures/чел14.png'),
                                              (self.cell_size, round(1.6 * self.cell_size)))
         self.Alice = pygame.transform.scale(pygame.image.load('pictures/чел7.png'),
@@ -171,6 +180,14 @@ class Board:
         self.Andrew = pygame.transform.scale(pygame.image.load('pictures/чел12.png'),
                                             (self.cell_size, round(1.6 * self.cell_size)))
         self.Roma = pygame.transform.scale(pygame.image.load('pictures/чел13.png'),
+                                             (self.cell_size, round(1.6 * self.cell_size)))
+        self.Mari = pygame.transform.scale(pygame.image.load('pictures/чел1.png'),
+                                             (self.cell_size, round(1.6 * self.cell_size)))
+        self.Mari2 = pygame.transform.scale(pygame.image.load('pictures/чел2.png'),
+                                             (self.cell_size, round(1.6 * self.cell_size)))
+        self.Mari3 = pygame.transform.scale(pygame.image.load('pictures/чел3.png'),
+                                             (self.cell_size, round(1.6 * self.cell_size)))
+        self.Mari4 = pygame.transform.scale(pygame.image.load('pictures/чел4.png'),
                                              (self.cell_size, round(1.6 * self.cell_size)))
     # настройка внешнего вида
 
@@ -293,14 +310,15 @@ class Board:
 
         self.cell_size = cell_size
 
-    def render(self, screen):
+    def render(self, screen, pos):
+
 
         # pygame.draw.circle(screen, (255, 255, 0), 70, 80)
         level = self.load_level(player.cur_pol)
         for y in range(self.height):
 
             for x in range(self.width):
-                coord = (self.left + x * self.cell_size, self.top + y * self.cell_size, self.cell_size, self.cell_size)
+                coord = (pos[0], pos[1], player.cs * 2, player.cs)
 
                 if self.board[y][x] == 1:
                     pygame.draw.rect(screen, (0, 255, 0), coord)
@@ -336,11 +354,25 @@ class Board:
                 except Exception:
                     pass
 
-    def draw_level(self, level):
+    def draw_level(self, level, pos):
         x, y = None, None
         for y in range(len(level)):
             for x in range(len(level[y])):
                 try:
+                    coord = (pos[0], pos[1], player.cs * 2, player.cs)
+
+                    if player.get_go() == 's':
+                        screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
+                    elif player.get_go() == 'w':
+                        screen.blit(self.Mari2, (coord[0], coord[1] - board.cell_size))
+                    elif player.get_go() == 'a':
+                        screen.blit(self.Mari3, (coord[0], coord[1] - board.cell_size))
+                    elif player.get_go() == 'd':
+                        screen.blit(self.Mari4, (coord[0], coord[1] - board.cell_size))
+                    else:
+                        screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
+                    coord = (
+                    self.left + x * self.cell_size, self.top + y * self.cell_size, self.cell_size, self.cell_size)
                     if level[y][x] == '@':
                         screen.blit(self.wall1, (x * self.cell_size, y * self.cell_size))
                     elif level[y][x] == 'd' and (not self.board_condition[y + 1][x] or self.board[y + 1][x] != 5):
@@ -369,6 +401,8 @@ class Board:
                         screen.blit(self.chair2, (x * self.cell_size, (y + 0.8) * self.cell_size))
                     elif level[y][x] == 'w':
                         screen.blit(self.chair3, (x * self.cell_size, (y + 1.2) * self.cell_size))
+                    elif level[y][x] == 'с':
+                        screen.blit(self.ciniy, (x * self.cell_size, (y - 1) * self.cell_size))
                     elif level[y][x] == 'р':
                         screen.blit(self.Polly, (x * self.cell_size, (y - 1) * self.cell_size))
                     elif level[y][x] == 'а':
@@ -385,6 +419,16 @@ class Board:
                         screen.blit(self.Roma, (x * self.cell_size, (y - 1) * self.cell_size))
                     elif level[y][x] == 'д':
                         screen.blit(self.Dasha, (x * self.cell_size, (y - 1) * self.cell_size))
+                    elif player.get_go() == 's' and level[y][x] == coord:
+                        screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
+                    elif player.get_go() == 'w' and level[y][x] == coord:
+                        screen.blit(self.Mari2, (coord[0], coord[1] - board.cell_size))
+                    elif player.get_go() == 'a' and level[y][x] == coord:
+                        screen.blit(self.Mari3, (coord[0], coord[1] - board.cell_size))
+                    elif player.get_go() == 'd' and level[y][x] == coord:
+                        screen.blit(self.Mari4, (coord[0], coord[1] - board.cell_size))
+                    elif player.get_go() != 'd' and level[y][x] == coord:
+                        screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
 
 
                 except Exception:
@@ -509,7 +553,7 @@ class Board:
                     elif level[y][x] in chars:
                         self.board[y][x] = 2
                         self.board_condition[y][x] = level[y][x]
-                        print(self.board_condition[y][x])
+                        print(level[y][x])
                 except Exception:
                     print('lo')
         # вернем игрока, а также размер поля в клетках
@@ -533,14 +577,7 @@ class Arrow:
         self.dg = 0
         self.lil_lock = 0
         self.big_lock = 0
-        self.Mari = pygame.transform.scale(pygame.image.load('pictures/чел1.png'),
-                                           (board.cell_size, round(1.6 * board.cell_size)))
-        self.Mari2 = pygame.transform.scale(pygame.image.load('pictures/чел2.png'),
-                                           (board.cell_size, round(1.6 * board.cell_size)))
-        self.Mari3 = pygame.transform.scale(pygame.image.load('pictures/чел3.png'),
-                                           (board.cell_size, round(1.6 * board.cell_size)))
-        self.Mari4 = pygame.transform.scale(pygame.image.load('pictures/чел4.png'),
-                                           (board.cell_size, round(1.6 * board.cell_size)))
+
 
     def get_go(self):
         if go[0]:
@@ -560,24 +597,19 @@ class Arrow:
 
         if self.get_go() == 's':
             pygame.draw.rect(screen, (255, 0, 0), coord)
-            screen.blit(self.Mari, (pos[0] * board.cell_size, (pos[1] - 1) * board.cell_size))
 
 
         elif self.get_go() == 'w':
             pygame.draw.rect(screen, (255, 255, 0), coord)
-            screen.blit(self.Mari2, (pos[0] * board.cell_size, (pos[1] - 1) * board.cell_size))
 
         elif self.get_go() == 'a':
             pygame.draw.rect(screen, (255, 0, 255), coord)
-            screen.blit(self.Mari3, (pos[0] * board.cell_size, (pos[1] - 1) * board.cell_size))
 
         elif self.get_go() == 'd':
             pygame.draw.rect(screen, (0, 255, 255), coord)
-            screen.blit(self.Mari4, (pos[0] * board.cell_size, (pos[1] - 1) * board.cell_size))
 
         else:
             pygame.draw.rect(screen, (0, 0, 255), coord)
-            screen.blit(self.Mari, (pos[0] * board.cell_size, (pos[1] - 1) * board.cell_size))
 
     def do(self, screen, coord):
         print('do')
@@ -862,41 +894,73 @@ class Arrow:
                 for i in range(len(chars)):
                     if chars[i] == board.add_cake:
                         k = str(i + 1)
-                con = sqlite3.connect('log_base')
-                cur = con.cursor()
-                f = cur.execute(f'''SELECT mod FROM mod where id = {k}''').fetchall()
-                font = pygame.font.Font(None, 50)
-                f = f[0][0]
-                '''try:
-                    f = f[0][0].split('\n')[self.dg]
-                except Exception:
-                    print(3)
-                    return
-                if self.step >= 50:
-                    return
-                self.step = self.step + 1
-                print(f[0][0])
-                text = font.render(f[:self.step], True, (100, 255, 100))'''
-                print(f)
-                text = font.render(f, True, (100, 255, 100))
-                x = 680
-                pygame.draw.rect(screen, (255, 255, 255), ((0, x - 2), (width, height - x)), 5)
-                pygame.draw.rect(screen, (0, 0, 0), ((0 + 2, x), (width - 5, height - x - 5)))
-                screen.blit(text, (60, x + 40))
-                pygame.display.flip()
 
-                while pygame.event.wait().type != pygame.KEYDOWN:
-                    pass
-                return
+                if self.lil_lock == 1 or self.lil_lock == 3 or self.lil_lock == 4:
+                    f = 'фритайм'
+                    font = pygame.font.Font(None, 50)
+                    f = f[0][0]
+                    print(f)
+                    text = font.render(f, True, (100, 255, 100))
+                    x = 680
+                    pygame.draw.rect(screen, (255, 255, 255), ((0, x - 2), (width, height - x)), 5)
+                    pygame.draw.rect(screen, (0, 0, 0), ((0 + 2, x), (width - 5, height - x - 5)))
+                    screen.blit(text, (60, x + 40))
+                    pygame.display.flip()
+                    with open('freetime', 'w') as mapFile:
+                        mapFile.write(k)
+                    self.lil_lock += 1
+                    if self.lil_lock == 5:
+                        self.big_lock += 1
+                    chr.generate_friends('map')
+                    chr.generate_friends('maptexturka')
+
+
+                    while pygame.event.wait().type != pygame.KEYDOWN:
+                        pass
+                    return
+                else:
+                    con = sqlite3.connect('log_base')
+                    cur = con.cursor()
+                    f = cur.execute(f'''SELECT mod FROM mod where id = {k}''').fetchall()
+                    font = pygame.font.Font(None, 50)
+                    f = f[0][0]
+                    '''try:
+                        f = f[0][0].split('\n')[self.dg]
+                    except Exception:
+                        print(3)
+                        return
+                    if self.step >= 50:
+                        return
+                    self.step = self.step + 1
+                    print(f[0][0])
+                    text = font.render(f[:self.step], True, (100, 255, 100))'''
+                    print(f)
+                    text = font.render(f, True, (100, 255, 100))
+                    x = 680
+                    pygame.draw.rect(screen, (255, 255, 255), ((0, x - 2), (width, height - x)), 5)
+                    pygame.draw.rect(screen, (0, 0, 0), ((0 + 2, x), (width - 5, height - x - 5)))
+                    screen.blit(text, (60, x + 40))
+                    pygame.display.flip()
+
+                    while pygame.event.wait().type != pygame.KEYDOWN:
+                        pass
+
+                    return
             print('k', k, 'self.lil_lock', self.lil_lock)
             if k == '18' and (self.lil_lock == 0 or self.lil_lock == 1):
                 game = SnakeGame()
                 game.run()
-                self.lil_lock = 2
+                self.lil_lock = 1
+                chr.generate_friends('map')
+                chr.generate_friends('maptexturka')
+
             elif k == '18' and (self.lil_lock == 2 or self.lil_lock == 3):
                 game = CakeGame()
                 game.run()
-                self.lil_lock = 4
+                if self.lil_lock <= 3:
+                    self.lil_lock = 3
+                chr.generate_friends('map')
+                chr.generate_friends('maptexturka')
             else:
                 con = sqlite3.connect('log_base')
                 cur = con.cursor()
@@ -1081,11 +1145,11 @@ if __name__ == '__main__':
 
             player.timer += 1
 
-            board.render(screen)
+            board.render(screen, pos)
 
             player.render(pos)
 
-            board.draw_level(board.load_level(player.cur_texture))
+            board.draw_level(board.load_level(player.cur_texture), pos)
 
             clock.tick(FPS)
             print(player.cur_texture)
