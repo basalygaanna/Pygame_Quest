@@ -83,18 +83,13 @@ class Chara:
             sl = ((3, 16), (3, 15), (19, 18), (19, 15), (20, 17), (0, 0), (18, 20), (3, 24), (18, 19))
         with open((filename + '1'), 'r') as mapFile:
             level_map = [line.strip() for line in mapFile]
-        print(level_map)
         for i in range(len(chars)):
-            print(sl[i][0], sl[i][1])
-            print(level_map[sl[i][0]])
-            print(chars[i])
-            print(level_map[sl[i][0]][8])
             if sl[i] != (0, 0):
+                print(sl[i])
                 level_map[sl[i][0]] = ''.join([level_map[sl[i][0]][:sl[i][1] -1], chars[i], level_map[sl[i][0]][sl[i][1]:]])
-            print(level_map)
         with open(filename, 'w') as mapFile:
             for i in level_map:
-                mapFile.write(i)
+                mapFile.write(str(i))
                 mapFile.write('\n')
 
 
@@ -187,8 +182,14 @@ class Board:
                                              (self.cell_size, round(1.6 * self.cell_size)))
         self.Mari3 = pygame.transform.scale(pygame.image.load('pictures/чел3.png'),
                                              (self.cell_size, round(1.6 * self.cell_size)))
-        self.Mari4 = pygame.transform.scale(pygame.image.load('pictures/чел4.png'),
-                                             (self.cell_size, round(1.6 * self.cell_size)))
+        self.Mari4 = pygame.transform.scale(pygame.image.load('pictures/чел19.png'),
+                                            (self.cell_size, round(1.6 * self.cell_size)))
+        self.Mari5 = pygame.transform.scale(pygame.image.load('pictures/чел20.png'),
+                                            (self.cell_size, round(1.6 * self.cell_size)))
+        self.Mari6 = pygame.transform.scale(pygame.image.load('pictures/чел22.png'),
+                                            (self.cell_size, round(1.6 * self.cell_size)))
+        self.Mari7 = pygame.transform.scale(pygame.image.load('pictures/чел23.png'),
+                                            (self.cell_size, round(1.6 * self.cell_size)))
         self.sp1 = pygame.transform.scale(pygame.image.load('pictures/Призрака1.png'),
                                              (width // 5, height // 3 * 2))
         self.sp2 = pygame.transform.scale(pygame.image.load('pictures/Призрака2.png'),
@@ -346,25 +347,18 @@ class Board:
 
             for x in range(self.width):
                 '''coord = (pos[0], pos[1], player.cs * 2, player.cs)
-
                 if self.board[y][x] == 1:
                     pygame.draw.rect(screen, (0, 255, 0), coord)
-
                 elif self.board[y][x] == 2:
                     pygame.draw.rect(screen, (255, 255, 0), coord)
-
                 elif self.board[y][x] == 3:
                     pygame.draw.rect(screen, (0, 255, 255), coord)
-
                 elif self.board[y][x] == 4:
                     pygame.draw.rect(screen, (255, 255, 255), coord)
-
                 elif self.board[y][x] == 5:
                     pygame.draw.rect(screen, (0, 0, 255), coord)
-
                 elif self.board[y][x] == 6:
                     pygame.draw.rect(screen, (255, 0, 255), coord)
-
                 else:
                     pygame.draw.rect(screen, (255, 255, 255), coord, 1)'''
                 try:
@@ -388,7 +382,6 @@ class Board:
                 try:
                     '''
                     coord = (pos[0], pos[1], player.cs * 2, player.cs)
-
                     if player.get_go() == 's':
                         screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
                     elif player.get_go() == 'w':
@@ -402,13 +395,28 @@ class Board:
                     coord = (
                     self.left + x * self.cell_size, self.top + y * self.cell_size, self.cell_size, self.cell_size)
                     if player.get_go() == 's' and (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
-                        screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
+                        if rn:
+                            screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
+                        else:
+                            if player.timer % 2 == 0:
+                                screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
+                            else:
+                                screen.blit(self.Mari3, (coord[0], coord[1] - board.cell_size))
                     elif player.get_go() == 'w' and (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
-                        screen.blit(self.Mari2, (coord[0], coord[1] - board.cell_size))
+                        if rn:
+                            screen.blit(self.Mari4, (coord[0], coord[1] - board.cell_size))
+                        else:
+                            screen.blit(self.Mari5, (coord[0], coord[1] - board.cell_size))
                     elif player.get_go() == 'a' and (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
-                        screen.blit(self.Mari3, (coord[0], coord[1] - board.cell_size))
+                        if rn:
+                            screen.blit(self.Mari6, (coord[0], coord[1] - board.cell_size))
+                        else:
+                            screen.blit(self.Mari7, (coord[0], coord[1] - board.cell_size))
                     elif player.get_go() == 'd' and (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
-                        screen.blit(self.Mari4, (coord[0], coord[1] - board.cell_size))
+                        if rn:
+                            screen.blit(self.Mari6, (coord[0], coord[1] - board.cell_size))
+                        else:
+                            screen.blit(self.Mari7, (coord[0], coord[1] - board.cell_size))
                     elif (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
                         screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
                     if level[y][x] == '@':
@@ -1035,7 +1043,7 @@ if __name__ == '__main__':
     flag = False
 
     size = width, height = 1600, 1000
-    FPS = 10
+    FPS = 5
 
     screen = pygame.display.set_mode(size)
 
@@ -1048,6 +1056,7 @@ if __name__ == '__main__':
     chr.generate_friends('map')
     chr.generate_friends('maptexturka')
     board.start_screen()
+    rn = 0
 
     level_x, level_y = board.generate_level(board.load_level('map'))
 
@@ -1145,27 +1154,30 @@ if __name__ == '__main__':
 
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         fl[0] = 0
+                        rn = 1
 
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
-
                         fl[1] = 0
+                        rn = 1
 
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         fl[2] = 0
+                        rn = 1
 
                     if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                         fl[3] = 0
+                        rn = 1
             ps = board.board_condition[board.y][board.x]
             print('ps', ps)
             if player.get_go() == 's' and fl[0]:
-
+                rn = 0
                 if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
                     if board.cake == 4:
                         player.game_over()
                     pos = pos[0], pos[1] + runt
 
             if player.get_go() == 'w' and fl[1]:
-
+                rn = 0
                 if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
 
                     if board.cake == 4:
@@ -1173,7 +1185,7 @@ if __name__ == '__main__':
                     pos = pos[0], pos[1] - runt
 
             if player.get_go() == 'a' and fl[2]:
-
+                rn = 0
                 if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
 
                     if board.cake == 4:
@@ -1182,7 +1194,7 @@ if __name__ == '__main__':
                     pos = pos[0] - runt, pos[1]
 
             if player.get_go() == 'd' and fl[3]:
-
+                rn = 0
                 if not board.get_col(pos) or board.cake == 4 or (board.cake == 5 and ps):
 
                     pos = pos[0] + runt, pos[1]
