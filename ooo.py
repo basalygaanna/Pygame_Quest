@@ -103,15 +103,15 @@ class Chara:
 
 class Board:
     # создание поля
-    def __init__(self, width, height):
+    def __init__(self, Width, Height):
 
-        self.width = width
+        self.width = Width
 
-        self.height = height
+        self.height = Height
 
-        self.board = [[0] * width for _ in range(height)]
+        self.board = [[0] * Width for _ in range(Height)]
 
-        self.board_condition = [[0] * width for _ in range(height)]
+        self.board_condition = [[0] * Width for _ in range(Height)]
 
         # значения по умолчанию
 
@@ -189,6 +189,14 @@ class Board:
                                              (self.cell_size, round(1.6 * self.cell_size)))
         self.Mari4 = pygame.transform.scale(pygame.image.load('pictures/чел4.png'),
                                              (self.cell_size, round(1.6 * self.cell_size)))
+        self.sp1 = pygame.transform.scale(pygame.image.load('pictures/Призрака1.png'),
+                                             (width // 5, height // 3 * 2))
+        self.sp2 = pygame.transform.scale(pygame.image.load('pictures/Призрака2.png'),
+                                             (width // 5, height // 3 * 2))
+        self.sp3 = pygame.transform.scale(pygame.image.load('pictures/Призрака3.png'),
+                                             (width // 5, height // 3 * 2))
+        self.sp4 = pygame.transform.scale(pygame.image.load('pictures/Призрака.png'),
+                                             (width // 5, height // 3 * 2))
     # настройка внешнего вида
 
     def draw(self, level):
@@ -198,6 +206,18 @@ class Board:
                     wall1 = pygame.transform.scale(pygame.image.load('pictures/Ковер2.png'),
                                                     (board.cell_size, 1.5 * board.cell_size))
                     screen.blit(wall1, (x * self.cell_size, y * self.cell_size))
+
+    def anim(self):
+        r = random.randint(0, 50)
+        if player.big_lock == 0 or player.big_lock == 1:
+            if r == 1:
+                return self.sp4
+            elif player.timer % 3 == 1:
+                return self.sp1
+            elif player.timer % 3 == 2:
+                return self.sp2
+            else:
+                return self.sp3
 
 
 
@@ -252,10 +272,16 @@ class Board:
                 'Выйти',
             )
         ]
+        snow = pygame.transform.scale(load_image('снег.png'), (width, height))
         for button in buttons:
             button.draw(screen)
         while True:
             mouse_pos = pygame.mouse.get_pos()
+            screen.blit(fon, (0, 0))
+            print(player.timer)
+            screen.blit(self.anim(), (0, height // 3))
+            screen.blit(snow, (0, player.timer % height - height))
+            screen.blit(snow, (0, player.timer % height))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     terminate()
@@ -272,6 +298,7 @@ class Board:
             for button in buttons:
                 button.on_hoover(mouse_pos)
                 button.draw(screen)
+            player.timer += 10
 
             pygame.display.flip()
             clock.tick(FPS)
@@ -913,6 +940,7 @@ class Arrow:
                         self.big_lock += 1
                     chr.generate_friends('map')
                     chr.generate_friends('maptexturka')
+                    level_x, level_y = board.generate_level(board.load_level('map'))
 
 
                     while pygame.event.wait().type != pygame.KEYDOWN:
@@ -953,6 +981,7 @@ class Arrow:
                 self.lil_lock = 1
                 chr.generate_friends('map')
                 chr.generate_friends('maptexturka')
+                level_x, level_y = board.generate_level(board.load_level('map'))
 
             elif k == '18' and (self.lil_lock == 2 or self.lil_lock == 3):
                 game = CakeGame()
@@ -961,6 +990,7 @@ class Arrow:
                     self.lil_lock = 3
                 chr.generate_friends('map')
                 chr.generate_friends('maptexturka')
+                level_x, level_y = board.generate_level(board.load_level('map'))
             else:
                 con = sqlite3.connect('log_base')
                 cur = con.cursor()
@@ -1038,7 +1068,7 @@ if __name__ == '__main__':
                         player.do(screen, pos)
 
                     if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
-                        FPS = FPS + 100
+                        FPS = FPS + 10
 
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         fl[0] = 1
@@ -1111,7 +1141,7 @@ if __name__ == '__main__':
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
-                        FPS = FPS - 100
+                        FPS = FPS - 10
 
                     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         fl[0] = 0
