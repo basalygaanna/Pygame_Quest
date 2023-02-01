@@ -190,6 +190,10 @@ class Board:
                                             (self.cell_size, round(1.6 * self.cell_size)))
         self.Mari7 = pygame.transform.scale(pygame.image.load('pictures/чел23.png'),
                                             (self.cell_size, round(1.6 * self.cell_size)))
+        self.Mari8 = pygame.transform.scale(pygame.image.load('pictures/чел24.png'),
+                                            (self.cell_size, round(1.6 * self.cell_size)))
+        self.Mari9 = pygame.transform.scale(pygame.image.load('pictures/чел25.png'),
+                                            (self.cell_size, round(1.6 * self.cell_size)))
         self.sp1 = pygame.transform.scale(pygame.image.load('pictures/Призрака1.png'),
                                              (width // 5, height // 3 * 2))
         self.sp2 = pygame.transform.scale(pygame.image.load('pictures/Призрака2.png'),
@@ -409,9 +413,9 @@ class Board:
                             screen.blit(self.Mari5, (coord[0], coord[1] - board.cell_size))
                     elif player.get_go() == 'a' and (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
                         if rn:
-                            screen.blit(self.Mari6, (coord[0], coord[1] - board.cell_size))
+                            screen.blit(self.Mari8, (coord[0], coord[1] - board.cell_size))
                         else:
-                            screen.blit(self.Mari7, (coord[0], coord[1] - board.cell_size))
+                            screen.blit(self.Mari9, (coord[0], coord[1] - board.cell_size))
                     elif player.get_go() == 'd' and (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
                         if rn:
                             screen.blit(self.Mari6, (coord[0], coord[1] - board.cell_size))
@@ -419,6 +423,14 @@ class Board:
                             screen.blit(self.Mari7, (coord[0], coord[1] - board.cell_size))
                     elif (x, y) == (pos[0] // self.cell_size, pos[1] // self.cell_size):
                         screen.blit(self.Mari, (coord[0], coord[1] - board.cell_size))
+                    if True:
+                        try:
+                            if level[y][x - 1] == 'o' :
+                                screen.blit(self.table3, ((x -1) * self.cell_size, (y) * self.cell_size))
+                            elif level[y][x - 2] == 'o' :
+                                screen.blit(self.table3, ((x -2) * self.cell_size, (y) * self.cell_size))
+                        except Exception:
+                            pass
                     if level[y][x] == '@':
                         screen.blit(self.wall1, (x * self.cell_size, y * self.cell_size))
                     elif level[y][x] == 'd' and (not self.board_condition[y + 1][x] or self.board[y + 1][x] != 5):
